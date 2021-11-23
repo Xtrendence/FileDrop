@@ -4,7 +4,7 @@
 	"description": "An encrypted file sharing application that leverages web sockets to allow users to send and receive files.",
 	"main": "server.js",
 	"scripts": {
-		"test": "jest",
+		"test": "jest --detectOpenHandles",
 		"start": "node server.js",
 		"dev": "nodemon server.js"
 	},
