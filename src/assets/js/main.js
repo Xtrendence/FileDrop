@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+	const Notify = new Notifier("TopLeft");
+
 	let body = document.getElementsByTagName("body")[0];
 
 	let ip = document.getElementById("span-ip").textContent;
@@ -11,6 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	};
 
 	let socket = io.connect(`http://${ip}:${port}`);
+
+	socket.on("notify", notification => {
+		Notify.info(notification);
+	});
 
 	socket.on("set-color", colors => {
 		let gradientStopKeys = Object.keys(gradientStops);

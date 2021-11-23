@@ -15,7 +15,7 @@ const io = require("socket.io")(server, {
 	maxHttpBufferSize: 8192 * 1024
 });
 
-const connectionManager = new ConnectionManager(io);
+const connectionManager = new ConnectionManager(io, 64);
 
 io.on("connection", socket => {
 	connectionManager.addClient(socket);
