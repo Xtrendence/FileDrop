@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	socket.on("set-color", colors => {
 		let gradientStopKeys = Object.keys(gradientStops);
+		
 		for(let i = 0; i < gradientStopKeys.length; i++) {
 			gradientStops[gradientStopKeys[i]].setAttribute("stop-color", colors[i]);
 		}

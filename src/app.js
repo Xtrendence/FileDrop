@@ -1,8 +1,9 @@
-const express = require("express");
-const cors = require("cors");
 const utils = require("./modules/Utils");
 const ip = utils.getIP();
 const port = 2180;
+
+const express = require("express");
+const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const app = express();
