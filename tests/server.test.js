@@ -1,5 +1,5 @@
 const supertest = require("supertest");
-const app = require("../app");
+const app = require("../src/app");
 
 test("Should return 200", async () => {
 	let response = await supertest(app).get("/");
