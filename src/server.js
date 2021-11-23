@@ -15,9 +15,10 @@ const io = require("socket.io")(server, {
 	maxHttpBufferSize: 8192 * 1024
 });
 
+const connectionManager = new ConnectionManager(io);
+
 io.on("connection", socket => {
-	const manager = new ConnectionManager(io);
-	manager.addClient(socket);
+	connectionManager.addClient(socket);
 });
 
 console.log("Started Server... http://" + ip + ":" + server.address().port);
