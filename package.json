@@ -1,0 +1,27 @@
+{
+  "name": "filedrop",
+  "version": "1.0.0",
+  "description": "An encrypted file sharing application that leverages web sockets to allow users to send and receive files.",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xtrendence/FileDrop.git"
+  },
+  "author": "Xtrendence <xtrendence@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Xtrendence/FileDrop/issues"
+  },
+  "homepage": "https://github.com/Xtrendence/FileDrop#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "jest": "^27.3.1",
+    "nodemon": "^2.0.15",
+    "socket.io": "^4.4.0"
+  }
+}
