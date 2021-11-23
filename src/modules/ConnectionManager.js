@@ -1,3 +1,5 @@
+const PermissionManager = require("./PermissionManager");
+const UploadManager = require("./UploadManager");
 const utils = require("./Utils");
 
 module.exports = class ConnectionManager {
@@ -11,10 +13,13 @@ module.exports = class ConnectionManager {
 	}
 
 	getClients() {
-		let clients = this.clients;
+		let clients = Object.create(this.clients);
 
 		Object.keys(clients).map(ip => {
 			delete clients[ip]["socket"];
+			delete clients[ip]["uploadManager"];
+			delete clients[ip]["permissionManager"];
+			delete clients[ip]["color"];
 		});
 
 		return clients;
@@ -23,7 +28,20 @@ module.exports = class ConnectionManager {
 	addClient(socket) {
 		let address = socket.handshake.address;
 
-		this.clients[address] = { socket:socket, key:null };
+		let color = utils.getColor(address, this.clients);
+		
+		let permissionManager = new PermissionManager(this);
+		permissionManager.attach(socket);
+		
+		let uploadManager = new UploadManager(this, permissionManager);
+		uploadManager.attach(socket);
+
+		permissionManager.addEventListener("change", (state) => {
+			this.clients[address]["permissionManager"] = state;
+			uploadManager.updatePermissionManager(state);
+		});
+
+		this.clients[address] = { socket:socket, key:null, uploadManager:uploadManager, permissionManager:permissionManager, color:color.index };
 
 		socket.on("disconnect", () => {
 			this.removeClient(address);
@@ -33,7 +51,7 @@ module.exports = class ConnectionManager {
 			this.clients[address]["key"] = key;
 		});
 
-		socket.emit("set-color", utils.getColor());
+		socket.emit("set-color", color.colors);
 
 		this.broadcastList();
 	}
