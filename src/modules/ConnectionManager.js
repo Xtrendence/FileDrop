@@ -1,30 +1,23 @@
 const PermissionManager = require("./PermissionManager");
 const UploadManager = require("./UploadManager");
+const DBAdapter = require("./DBAdapter");
 const utils = require("./Utils");
 
 module.exports = class ConnectionManager {
-	constructor(io, clientLimit = 64) {
+	constructor(io, db, clientLimit = 64) {
 		this.io = io;
+		this.db = db;
 		this.clientLimit = clientLimit;
 		this.clients = {};
 	}
 
-	broadcastList() {
-		console.log(this.getClients());
-		this.io.to("network").emit("client-list", this.getClients());
+	async broadcastList() {
+		this.io.to("network").emit("client-list", await this.getClients());
 	}
 
-	getClients() {
-		let current = this.clients;
-		let clients = {};
-
-		Object.keys(current).map(ip => {
-			clients[ip] = {
-				key: current[ip]["key"]
-			}
-		});
-
-		return clients;
+	async getClients() {
+		let clients = await this.db.fetch("clients");
+		return clients.data;
 	}
 
 	clientExists(address) {
@@ -35,12 +28,17 @@ module.exports = class ConnectionManager {
 		return (Object.keys(this.clients).length >= this.clientLimit);
 	}
 
-	addClient(socket) {
+	async saveClients() {
+		let clients = DBAdapter.adapt(this.clients);
+		await this.db.save("clients", clients);
+	}
+
+	async addClient(socket) {
 		if(!this.clientLimitReached()) {
 			let address = socket.handshake.address;
 
 			if(this.clientExists(address)) {
-				this.removeClient(address);
+				await this.removeClient(address);
 			}
 
 			socket.join("network");
@@ -60,10 +58,10 @@ module.exports = class ConnectionManager {
 
 			this.clients[address] = { socket:socket, key:null, uploadManager:uploadManager, permissionManager:permissionManager, color:color.index };
 
-			socket.on("disconnect", () => {
+			socket.on("disconnect", async () => {
 				socket.leave("network");
 				permissionManager.off("change");
-				this.removeClient(address);
+				await this.removeClient(address);
 			});
 
 			socket.on("set-key", key => {
@@ -72,7 +70,9 @@ module.exports = class ConnectionManager {
 
 			socket.emit("set-color", color.colors);
 
-			this.broadcastList();
+			await this.saveClients();
+
+			await this.broadcastList();
 		} else {
 			socket.emit("notify", { 
 				title: "Limit Reached", 
@@ -84,8 +84,9 @@ module.exports = class ConnectionManager {
 		}
 	}
 
-	removeClient(address) {
+	async removeClient(address) {
 		delete this.clients[address];
-		this.broadcastList();
+		await this.saveClients();
+		await this.broadcastList();
 	}
 }

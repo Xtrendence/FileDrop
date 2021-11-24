@@ -24,6 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		Notify.info(notification);
 	});
 
+	socket.on("client-list", clients => {
+		console.log(clients);
+	});
+
 	socket.on("set-color", colors => {
 		let gradientStopKeys = Object.keys(gradientStops);
 		
