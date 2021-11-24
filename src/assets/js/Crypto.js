@@ -1,4 +1,8 @@
 class Crypto {
+	encode(data) {
+		return String.fromCharCode.apply(null, new Uint8Array(data));
+	}
+
 	encryptAES(plaintext, password) {
 		let encrypted = CryptoJS.AES.encrypt(plaintext, password, { 
 			mode: CryptoJS.mode.CFB,
