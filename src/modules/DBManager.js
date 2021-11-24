@@ -11,19 +11,20 @@ module.exports = class DBManager {
 		});
 	}
 
-	async save(key, value) {
+	async save(key, value, force) {
 		return new Promise(async (resolve, reject) => {
 			this.exists(key).then(() => {
 				this.db.get(key).then(document => {
 					document.data = value;
 
-					this.db.put(document).then(response => {
+					this.db.put(document, { force:force }).then(response => {
 						resolve(response);
 					}).catch(error => {
+						console.log("Exists - Save Error", error);
 						reject(error);
 					});
 				}).catch(error => {
-					console.log(error);
+					console.log("Fetch Error", error);
 					reject(error);
 				});
 			}).catch(() => {
@@ -33,7 +34,7 @@ module.exports = class DBManager {
 				}).then(response => {
 					resolve(response);
 				}).catch(error => {
-					console.log(error);
+					console.log("Create - Save Error", error);
 					reject(error);
 				});
 			});
@@ -47,10 +48,11 @@ module.exports = class DBManager {
 					this.db.remove(document).then(response => {
 						resolve(response);
 					}).catch(error => {
+						console.log("Remove Error", error);
 						reject(error);
 					});
 				}).catch(error => {
-					console.log(error);
+					console.log("Fetch Error", error);
 					reject(error);
 				});
 			}).catch(() => {

@@ -24,16 +24,32 @@ module.exports = class ConnectionManager {
 		return Object.keys(this.clients).includes(address);
 	}
 
+	usernameTaken(username) {
+		Object.keys(this.clients).map(ip => {
+			if(username === this.clients[ip]["username"]) {
+				return true;
+			}
+		});
+
+		return false;
+	}
+
 	clientLimitReached() {
 		return (Object.keys(this.clients).length >= this.clientLimit);
 	}
 
 	async saveClients() {
 		let clients = DBAdapter.adapt(this.clients);
-		await this.db.save("clients", clients);
+
+		try {
+			await this.db.save("clients", clients, false);
+		} catch(error) {
+			await this.db.save("clients", clients, true);
+			console.log(error);
+		}
 	}
 
-	async addClient(socket) {
+	async addClient(socket, username) {
 		if(!this.clientLimitReached()) {
 			let address = socket.handshake.address;
 
@@ -56,7 +72,7 @@ module.exports = class ConnectionManager {
 				uploadManager.updatePermissionManager(state);
 			});
 
-			this.clients[address] = { socket:socket, key:null, uploadManager:uploadManager, permissionManager:permissionManager, color:color.index };
+			this.clients[address] = { socket:socket, username:username, key:null, uploadManager:uploadManager, permissionManager:permissionManager, color:color.index };
 
 			socket.on("disconnect", async () => {
 				socket.leave("network");

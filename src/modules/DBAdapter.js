@@ -4,6 +4,7 @@ module.exports = class DBAdapter {
 
 		Object.keys(clients).map(ip => {
 			adapted[ip] = {
+				username: clients[ip]["username"],
 				key: clients[ip]["key"]
 			}
 		});

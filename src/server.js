@@ -22,7 +22,13 @@ const dbManager = new DBManager("db");
 const connectionManager = new ConnectionManager(io, dbManager, 64);
 
 io.on("connection", socket => {
-	connectionManager.addClient(socket);
+	socket.on("register", username => {
+		if(!connectionManager.usernameTaken(username)) {
+			connectionManager.addClient(socket, username);
+		} else {
+			socket.emit("username-taken");
+		}
+	});
 });
 
 console.log("\x1b[35m", "Started Server: ", "\x1b[4m", "http://" + ip + ":" + server.address().port, "\x1b[0m");
