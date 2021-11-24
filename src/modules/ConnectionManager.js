@@ -10,20 +10,25 @@ module.exports = class ConnectionManager {
 	}
 
 	broadcastList() {
+		console.log(this.getClients());
 		this.io.to("network").emit("client-list", this.getClients());
 	}
 
 	getClients() {
-		let clients = Object.create(this.clients);
+		let current = this.clients;
+		let clients = {};
 
-		Object.keys(clients).map(ip => {
-			delete clients[ip]["socket"];
-			delete clients[ip]["uploadManager"];
-			delete clients[ip]["permissionManager"];
-			delete clients[ip]["color"];
+		Object.keys(current).map(ip => {
+			clients[ip] = {
+				key: current[ip]["key"]
+			}
 		});
 
 		return clients;
+	}
+
+	clientExists(address) {
+		return Object.keys(this.clients).includes(address);
 	}
 
 	clientLimitReached() {
@@ -33,6 +38,12 @@ module.exports = class ConnectionManager {
 	addClient(socket) {
 		if(!this.clientLimitReached()) {
 			let address = socket.handshake.address;
+
+			if(this.clientExists(address)) {
+				this.removeClient(address);
+			}
+
+			socket.join("network");
 
 			let color = utils.getColor(address, this.clients);
 			
@@ -50,6 +61,7 @@ module.exports = class ConnectionManager {
 			this.clients[address] = { socket:socket, key:null, uploadManager:uploadManager, permissionManager:permissionManager, color:color.index };
 
 			socket.on("disconnect", () => {
+				socket.leave("network");
 				permissionManager.off("change");
 				this.removeClient(address);
 			});

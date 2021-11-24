@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+	let svgBackground = document.getElementById("background");
+
+	window.addEventListener("resize", setBackgroundSize);
+
+	setBackgroundSize();
+
 	const Notify = new Notifier("TopLeft");
 
 	let body = document.getElementsByTagName("body")[0];
@@ -24,5 +30,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		for(let i = 0; i < gradientStopKeys.length; i++) {
 			gradientStops[gradientStopKeys[i]].setAttribute("stop-color", colors[i]);
 		}
+
+		svgBackground.style.background = colors[2];
 	});
+
+	function setBackgroundSize() {
+		if(window.innerWidth + 300 > window.innerHeight) {
+			svgBackground.setAttribute("viewBox", `0 0 2000 ${window.innerHeight}`);
+		} else {
+			svgBackground.setAttribute("viewBox", `0 0 ${window.innerWidth} 1500`);
+		}
+	}
 });
