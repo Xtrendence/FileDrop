@@ -42,7 +42,7 @@ module.exports = class ConnectionManager {
 			let uploadManager = new UploadManager(this, permissionManager);
 			uploadManager.attach(socket);
 
-			permissionManager.addEventListener("change", (state) => {
+			permissionManager.on("change", (state) => {
 				this.clients[address]["permissionManager"] = state;
 				uploadManager.updatePermissionManager(state);
 			});
@@ -50,6 +50,7 @@ module.exports = class ConnectionManager {
 			this.clients[address] = { socket:socket, key:null, uploadManager:uploadManager, permissionManager:permissionManager, color:color.index };
 
 			socket.on("disconnect", () => {
+				permissionManager.off("change");
 				this.removeClient(address);
 			});
 

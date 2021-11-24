@@ -9,11 +9,11 @@ module.exports = class PermissionManager {
 		return Object.keys(this.events).includes(event);
 	}
 
-	addEventListener(event, callback) {
+	on(event, callback) {
 		this.events[event] = callback;
 	}
 
-	removeEventListener(event) {
+	off(event) {
 		delete this.events[event];
 	}
 
