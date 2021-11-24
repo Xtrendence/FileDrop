@@ -26,8 +26,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let socket = io.connect(`http://${ip}:${port}`);
 
+	let spanServer = document.getElementById("span-server");
+
+	let inputUsername = document.getElementById("input-username");
+
+	let buttonRandomUsername = document.getElementById("random-username-button");
+	let buttonConfirmUsername = document.getElementById("confirm-username-button");
+
+	buttonRandomUsername.addEventListener("click", () => {
+
+	});
+
+	buttonConfirmUsername.addEventListener("click", () => {
+		socket.emit("register", inputUsername.value);
+	});
+
+	socket.on("connect", () => {
+		setStatus("Connected");
+	});
+
+	socket.on("disconnect", () => {
+		setStatus("Disconnected");
+	});
+
+	socket.on("reconnection_attempt", () => {
+		setStatus("Reconnecting...");
+	});
+
+	socket.on("reconnect", () => {
+		setStatus("Connected");
+	});
+
 	socket.on("notify", notification => {
 		Notify.info(notification);
+	});
+
+	socket.on("username-taken", () => {
+		Notify.error({
+			title: "Username Taken",
+			description: "That username isn't available."
+		});
 	});
 
 	socket.on("client-list", clients => {
@@ -36,13 +74,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	socket.on("set-color", colors => {
 		let gradientStopKeys = Object.keys(gradientStops);
-		
+	
 		for(let i = 0; i < gradientStopKeys.length; i++) {
 			gradientStops[gradientStopKeys[i]].setAttribute("stop-color", colors[i]);
 		}
 
 		svgBackground.style.background = colors[2];
 	});
+
+	function setStatus(status) {
+		spanServer.textContent = `${ip}:${port} | ${status}`;
+
+		switch(status) {
+			case "Connected":
+				spanServer.classList.add("active");
+				spanServer.classList.remove("processing");
+				break;
+			case "Reconnecting...":
+				spanServer.classList.remove("active");
+				spanServer.classList.add("processing");
+				break;
+			case "Disconnected":
+				spanServer.classList.remove("active");
+				spanServer.classList.remove("processing");
+				break;
+		}
+	}
 
 	function setBackgroundSize() {
 		if(window.innerWidth + 300 > window.innerHeight) {

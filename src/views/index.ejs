@@ -32,8 +32,9 @@
 	</head>
 	<body>
 		<div class="login-wrapper">
+			<span class="login-title noselect">FileDrop</span>
 			<div class="login-container">
-				<input type="text" placeholder="Username...">
+				<input id="input-username" type="text" placeholder="Username...">
 				<div>
 					<button id="random-username-button">Random</button>
 					<button id="confirm-username-button">Confirm</button>
@@ -45,6 +46,6 @@
 		</div>
 		<span id="span-ip" class="hidden"><%= ip %></span>
 		<span id="span-port" class="hidden"><%= port %></span>
-		<span><%= ip + ":" + port %></span>
+		<span id="span-server" class="server-title noselect"><%= ip + ":" + port %></span>
 	</body>
 </html>
