@@ -20,7 +20,9 @@ module.exports = class DBManager {
 					this.db.put(document, { force:force }).then(response => {
 						resolve(response);
 					}).catch(error => {
-						console.log("Exists - Save Error", error);
+						if(error.status !== 409) {
+							console.log("Exists - Save Error", error);
+						}
 						reject(error);
 					});
 				}).catch(error => {

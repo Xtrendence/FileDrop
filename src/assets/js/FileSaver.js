@@ -10,7 +10,7 @@ class FileSaver {
 	async append(data) {
 		if("key" in data) {
 			if(empty(this.key) || data.chunk === 1) {
-				this.key = await Crypto.decryptRSA(data.key, this.privateKey);
+				this.key = await CryptoFD.decryptRSA(data.key, this.privateKey);
 			}
 
 			let buffer = this.decryptChunk(data.chunkData, this.key);
@@ -22,7 +22,7 @@ class FileSaver {
 	}
 
 	decryptChunk(chunkData, key) {
-		let decrypted = Crypto.decryptAES(chunkData, key);
+		let decrypted = CryptoFD.decryptAES(chunkData, key);
 
 		let buffer = new ArrayBuffer(decrypted.length);
 		let bufferView = new Uint8Array(buffer);

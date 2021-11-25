@@ -15,7 +15,7 @@
 		<meta name="keywords" content="Xtrendence,Adrian,Khodadad,Nouchin,FileDrop,WebSocket,Socket.IO,Server,File-Sharing,Upload">
 		<meta name="author" content="Xtrendence">
 		<script src="./assets/js/utils.js"></script>
-		<script src="./assets/js/Crypto.js"></script>
+		<script src="./assets/js/CryptoFD.js"></script>
 		<script src="./assets/js/Notifier.js"></script>
 		<script src="./assets/js/FileSaver.js"></script>
 		<script src="./assets/js/ChunkReader.js"></script>
@@ -47,6 +47,6 @@
 		</div>
 		<span id="span-ip" class="hidden"><%= ip %></span>
 		<span id="span-port" class="hidden"><%= port %></span>
-		<span id="span-server" class="server-title noselect"><%= ip + ":" + port %></span>
+		<button id="server-button" class="server-button"><%= ip + ":" + port %></button>
 	</body>
 </html>

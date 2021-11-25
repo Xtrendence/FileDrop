@@ -80,7 +80,7 @@ input[type=number] {
 	width:100%;
 	height:100%;
 }
-.login-title, .server-title {
+.login-title {
 	position:absolute;
 	z-index:11;
 	top:20px;
@@ -92,20 +92,6 @@ input[type=number] {
 	backdrop-filter:blur(2px);
 	font-weight:bold;
 	color:var(--main-contrast-light);
-}
-.server-title {
-	top:auto;
-	bottom:20px;
-	background:rgba(0,0,0,0.5);
-	color:var(--main-first);
-}
-.server-title.active {
-	color:var(--main-contrast-light);
-	background:var(--main-first-transparent);
-}
-.server-title.processing {
-	color:var(--accent-contrast);
-	background:var(--accent-first);
 }
 
 .login-container {
@@ -165,7 +151,8 @@ input[type=number] {
 	min-width:100%;
 	min-height:100%;
 }
-.logout-button {
+
+.server-button, .logout-button {
 	cursor:pointer;
 	position:absolute;
 	z-index:2;
@@ -181,6 +168,23 @@ input[type=number] {
 	font-weight:bold;
 	color:var(--main-contrast-light);
 }
-#desktop .logout-button:hover {
+#desktop .server-button:hover, #desktop .logout-button:hover {
 	background:var(--main-first);
+	color:var(--main-contrast-light);
+}
+.server-button {
+	z-index:11;
+	width:auto;
+	top:auto;
+	bottom:20px;
+	background:rgba(0,0,0,0.5);
+	color:var(--main-first);
+}
+.server-button.active {
+	color:var(--main-contrast-light);
+	background:var(--main-first-transparent);
+}
+.server-button.processing {
+	color:var(--accent-contrast);
+	background:var(--accent-first);
 }

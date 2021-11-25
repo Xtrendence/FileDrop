@@ -71,5 +71,9 @@ module.exports = {
 
 	removeKey(key, {[key]: _, ...rest}) {
 		return rest;
+	},
+
+	epoch() {
+		return Math.floor(new Date().getTime() / 1000);
 	}
 }

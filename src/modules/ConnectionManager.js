@@ -11,8 +11,18 @@ module.exports = class ConnectionManager {
 		this.clients = {};
 	}
 
-	async broadcastList() {
-		this.io.to("network").emit("client-list", await this.getClients());
+	async broadcastList(changed = false) {
+		let clients = await this.getClients();
+		this.io.to("network").emit("client-list", clients);
+
+		if(changed) {
+			let list = [];
+			Object.keys(clients).map(ip => {
+				list.push(`${ip} - ${clients[ip]["username"]}`);
+			});
+
+			console.log(utils.epoch(), ": \x1b[33m", list, "\x1b[0m");
+		}
 	}
 
 	async getClients() {
@@ -45,7 +55,10 @@ module.exports = class ConnectionManager {
 			await this.db.save("clients", clients, false);
 		} catch(error) {
 			await this.db.save("clients", clients, true);
-			console.log(error);
+
+			if(error.status !== 409) {
+				console.log(error);
+			}
 		}
 	}
 
@@ -76,19 +89,25 @@ module.exports = class ConnectionManager {
 
 			socket.on("disconnect", async () => {
 				socket.leave("network");
+
 				permissionManager.off("change");
+
 				await this.removeClient(address);
 			});
 
-			socket.on("set-key", key => {
+			socket.on("set-key", async key => {
 				this.clients[address]["key"] = key;
+				
+				await this.saveClients();
+				await this.broadcastList();
 			});
 
 			socket.emit("set-color", color.colors);
 
-			await this.saveClients();
+			socket.emit("login", username);
 
-			await this.broadcastList();
+			await this.saveClients();
+			await this.broadcastList(true);
 		} else {
 			socket.emit("notify", { 
 				title: "Limit Reached", 
@@ -102,7 +121,8 @@ module.exports = class ConnectionManager {
 
 	async removeClient(address) {
 		delete this.clients[address];
+
 		await this.saveClients();
-		await this.broadcastList();
+		await this.broadcastList(true);
 	}
 }

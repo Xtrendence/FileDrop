@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+	let autoLogin = true;
+
 	let svgBackground = document.getElementById("background");
 
 	window.addEventListener("resize", setBackgroundSize);
@@ -29,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let divLogin = document.getElementById("login-wrapper");
 	let divApp = document.getElementById("app-wrapper");
 
-	let spanServer = document.getElementById("span-server");
+	let buttonServer = document.getElementById("server-button");
 
 	let inputUsername = document.getElementById("input-username");
 
@@ -42,6 +44,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	if(!empty(savedUsername)) {
 		inputUsername.value = savedUsername;
 	}
+
+	buttonServer.addEventListener("click", () => {
+		if(buttonServer.classList.contains("active") || buttonServer.classList.contains("processing")) {
+			socket.disconnect();
+		} else {
+			socket.connect();
+			socket.emit("register", localStorage.getItem("username"));
+		}
+	});
 
 	inputUsername.addEventListener("keydown", (event) => {
 		if(event.key.toLowerCase() === "enter") {
@@ -62,6 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	socket.on("connect", () => {
+		if(autoLogin && !empty(savedUsername) && !divLogin.classList.contains("hidden")) {
+			setTimeout(() => buttonConfirmUsername.click(), 625);
+		}
+
 		setStatus("Connected");
 	});
 
@@ -75,6 +90,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	socket.on("reconnect", () => {
 		setStatus("Connected");
+	});
+
+	socket.on("login", username => {
+		if(empty(localStorage.getItem("privateKey")) || empty(localStorage.getItem("publicKey"))) {
+			CryptoFD.generateRSAKeys().then(keys => {
+				localStorage.setItem("privateKey", keys.privateKey);
+				localStorage.setItem("publicKey", keys.publicKey);
+
+				socket.emit("set-key", keys.publicKey);
+			}).catch(error => {
+				console.log(error);
+				
+				Notify.error({
+					title: "RSA Keys",
+					description: "Couldn't generate public/private key pair."
+				});
+			});
+		} else {
+			socket.emit("set-key", localStorage.getItem("publicKey"));
+		}
+
+		login(username);
 	});
 
 	socket.on("logout", () => {
@@ -108,8 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	socket.on("set-color", colors => {
-		login(inputUsername.value);
-
 		let gradientStopKeys = Object.keys(gradientStops);
 	
 		for(let i = 0; i < gradientStopKeys.length; i++) {
@@ -120,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	function login(username) {
-		spanServer.style.left = "120px";
+		buttonServer.style.left = "120px";
 
 		localStorage.setItem("username", username);
 
@@ -131,11 +166,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		setTimeout(() => {
 			divLogin.removeAttribute("style");
 			divLogin.classList.add("hidden");
+			
+			inputUsername.value = "";
 		}, 250);
 	}
 
 	function logout() {
-		spanServer.removeAttribute("style");
+		buttonServer.removeAttribute("style");
 
 		localStorage.removeItem("username");
 
@@ -153,20 +190,20 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	function setStatus(status) {
-		spanServer.textContent = `${ip}:${port} | ${status}`;
+		buttonServer.textContent = `${ip}:${port} | ${status}`;
 
 		switch(status) {
 			case "Connected":
-				spanServer.classList.add("active");
-				spanServer.classList.remove("processing");
+				buttonServer.classList.add("active");
+				buttonServer.classList.remove("processing");
 				break;
 			case "Reconnecting...":
-				spanServer.classList.remove("active");
-				spanServer.classList.add("processing");
+				buttonServer.classList.remove("active");
+				buttonServer.classList.add("processing");
 				break;
 			case "Disconnected":
-				spanServer.classList.remove("active");
-				spanServer.classList.remove("processing");
+				buttonServer.classList.remove("active");
+				buttonServer.classList.remove("processing");
 				break;
 		}
 	}

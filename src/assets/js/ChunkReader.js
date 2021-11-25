@@ -17,8 +17,8 @@ class ChunkReader {
 			let data = { chunkData:content, chunk:this.currentChunk, offset:this.offset };
 
 			if(this.encryption) {
-				let encoded = Crypto.encode(content);
-				let encrypted = Crypto.encryptAES(encoded, this.key);
+				let encoded = CryptoFD.encode(content);
+				let encrypted = CryptoFD.encryptAES(encoded, this.key);
 
 				data = { chunkData:encrypted, key:this.encryptedKey, chunk:this.currentChunk, offset:this.offset };
 			}
@@ -68,7 +68,7 @@ class ChunkReader {
 
 	async encryptChunks(publicKey) {
 		this.encryption = true;
-		this.key = Crypto.generateAESKey();
-		this.encryptedKey = await Crypto.encryptRSA(this.key, publicKey);
+		this.key = CryptoFD.generateAESKey();
+		this.encryptedKey = await CryptoFD.encryptRSA(this.key, publicKey);
 	}
 }
