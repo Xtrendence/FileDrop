@@ -411,57 +411,61 @@ document.addEventListener("DOMContentLoaded", async () => {
 	});
 
 	socket.on("client-list", clients => {
-		delete clients[localStorage.getItem("ip")];
+		try {
+			delete clients[localStorage.getItem("ip")];
 
-		Object.keys(clientList).map(existing => {
-			if(existing in clients) {
-				clients[existing]["allowed"] = clientList[existing]["allowed"];
-			}
-		});
+			Object.keys(clientList).map(existing => {
+				if(existing in clients) {
+					clients[existing]["allowed"] = clientList[existing]["allowed"];
+				}
+			});
 
-		clientList = clients;
+			clientList = clients;
 
-		divClients.innerHTML = "";
+			divClients.innerHTML = "";
 
-		let ips = Object.keys(clients);
-		ips.map(ip => {
-			let client = clients[ip];
+			let ips = Object.keys(clients);
+			ips.map(ip => {
+				let client = clients[ip];
 
-			let div = document.createElement("div");
-			div.id = ip;
-			div.classList.add("client");
-			div.classList.add("noselect");
-			div.innerHTML = `<span class="username">${client.username}</span>`;
-			
-			let button = document.createElement("button");
-			button.classList.add("client-action");
+				let div = document.createElement("div");
+				div.id = ip;
+				div.classList.add("client");
+				div.classList.add("noselect");
+				div.innerHTML = `<span class="username">${client.username}</span>`;
+				
+				let button = document.createElement("button");
+				button.classList.add("client-action");
 
-			if(clientList[ip]["allowed"] === true) {
-				button.textContent = "Send File";
+				if(clientList[ip]["allowed"] === true) {
+					button.textContent = "Send File";
 
-				button.addEventListener("click", () => {
-					showUpload(ip, client.username);
-				});
-			} else {
-				button.textContent = "Ask Permission";
-
-				button.addEventListener("click", () => {
-					Notify.alert({ 
-						title: "Awaiting Response", 
-						description: "The other client needs to accept your upload request first.", 
-						duration: 6000,
-						color: "var(--main-contrast)",
-						background: "var(--main-third-transparent)"
+					button.addEventListener("click", () => {
+						showUpload(ip, client.username);
 					});
+				} else {
+					button.textContent = "Ask Permission";
 
-					socket.emit("ask-permission", { from:localStorage.getItem("ip"), to:ip });
-				});
-			}
+					button.addEventListener("click", () => {
+						Notify.alert({ 
+							title: "Awaiting Response", 
+							description: "The other client needs to accept your upload request first.", 
+							duration: 6000,
+							color: "var(--main-contrast)",
+							background: "var(--main-third-transparent)"
+						});
 
-			div.appendChild(button);
+						socket.emit("ask-permission", { from:localStorage.getItem("ip"), to:ip });
+					});
+				}
 
-			divClients.appendChild(div);
-		});
+				div.appendChild(button);
+
+				divClients.appendChild(div);
+			});
+		} catch(error) {
+			console.log(error);
+		}
 	});
 
 	socket.on("ask-permission", from => {
@@ -500,6 +504,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 				socket.emit("update-permission", { whitelist:whitelist, response:true, to:from });
 			}
 		}
+	});
+
+	socket.on("upload", data => {
+		console.log(data);
+	});
+
+	socket.on("uploaded", data => {
+		console.log(data);
 	});
 
 	socket.on("update-permission", data => {

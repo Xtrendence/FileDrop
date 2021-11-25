@@ -36,7 +36,9 @@ module.exports = class DBManager {
 				}).then(response => {
 					resolve(response);
 				}).catch(error => {
-					console.log("Create - Save Error", error);
+					if(error.status !== 409) {
+						console.log("Create - Save Error", error);
+					}
 					reject(error);
 				});
 			});
@@ -78,7 +80,9 @@ module.exports = class DBManager {
 			this.db.get(key).then(response => {
 				resolve(response);
 			}).catch(error => {
-				console.log(error);
+				if(error.status !== 404) {
+					console.log(error);
+				}
 				reject(error);
 			});
 		});

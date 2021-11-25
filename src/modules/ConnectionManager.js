@@ -76,7 +76,11 @@ module.exports = class ConnectionManager {
 			let clients = await this.db.fetch("clients");
 			return clients.data;
 		} catch(error) {
-			console.log(error);
+			if(error.status !== 404) {
+				console.log(error);
+			} else {
+				return {};
+			}
 		}
 	}
 
@@ -107,7 +111,7 @@ module.exports = class ConnectionManager {
 			await this.db.save("clients", clients, true);
 
 			if(error.status !== 409) {
-				console.log(error);
+				console.log("saveClients()", error);
 			}
 		}
 	}
