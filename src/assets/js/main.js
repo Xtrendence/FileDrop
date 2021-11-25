@@ -68,6 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	let buttonUpload = document.getElementById("upload-button");
 
 	let spanUpload = document.getElementById("upload-title");
+	let spanUploadSubtitle = document.getElementById("upload-subtitle");
 
 	let buttonLogout = document.getElementById("logout-button");
 
@@ -232,81 +233,106 @@ document.addEventListener("DOMContentLoaded", async () => {
 	});
 
 	divUploadArea.addEventListener("click", () => {
-		inputFile.click();
+		if(!divUploadArea.classList.contains("disabled")) {
+			inputFile.click();
+		}
 	});
 
 	divUploadArea.ondragover = divUploadArea.ondragenter = (event) => {
 		event.preventDefault();
 	};
 
-	divUploadArea.ondrop = function (event) {
-		inputFile.files = event.dataTransfer.files;
-		inputFile.dispatchEvent(new Event("change"));
-		event.preventDefault();
+	divUploadArea.ondrop = (event) => {
+		if(!divUploadArea.classList.contains("disabled")) {
+			inputFile.files = event.dataTransfer.files;
+			inputFile.dispatchEvent(new Event("change"));
+			event.preventDefault();
+		}
 	};
 
-	inputFile.addEventListener("change", async () => {
-		let publicKey = localStorage.getItem("publicKey");
-		let from = localStorage.getItem("ip");
-		let to = divUpload.getAttribute("data-client");
-
-		if(empty(inputFile.value) || inputFile.files.length === 0 || empty(publicKey) || empty(from) || empty(to)) {
-			return;
-		}
-
-		if(!serverConnected()) {
-			Notify.error({ 
-				title: "Not Connected", 
-				description: "You aren't connected to the server.", 
-				duration: 4000
-			});
-
-			hideUpload();
-			
-			return;
-		}
-
-		let file = inputFile.files[0];
-
-		let uploader = new Uploader(socket, from, to, file, encryptionEnabled());
-
-		let reader = new ChunkReader(file, 256 * 100, 0, 0);
-		reader.createReader();
-
-		if(encryptionEnabled()) {
-			await reader.encryptChunks(publicKey);
-		}
-
-		reader.on("chunkData", data => {
-			uploader.upload(data);
-		});
-
-		reader.on("nextChunk", (percentage, currentChunk, offset) => {
-
-		});
-
-		reader.on("done", (encryption, filename) => {
-			uploader.finish();
-
-			let notificationDescription = filename + " has been uploaded without encryption.";
-			if(encryption) {
-				notificationDescription = filename + " has been uploaded with encryption.";
-			}
-
-			Notify.success({ 
-				title: "File Uploaded", 
-				description: notificationDescription, 
-				duration: 4000,
-				color: "var(--accent-contrast)",
-				background: "var(--accent-second)"
-			});
-		});
-
-		reader.nextChunk();
+	inputFile.addEventListener("change", () => {
+		spanUploadSubtitle.textContent = inputFile.files[0].name;
 	});
 
-	buttonUpload.addEventListener("click", () => {
+	buttonUpload.addEventListener("click", async () => {
+		if(!divUploadArea.classList.contains("disabled")) {
+			try {
+				let from = localStorage.getItem("ip");
+				let to = divUpload.getAttribute("data-client");
 
+				let publicKey = divUpload.getAttribute("data-key");
+				if(empty(publicKey)) {
+					console.log(clientList);
+					publicKey = clientList[to]["key"];
+				}
+
+				if(empty(inputFile.value) || inputFile.files.length === 0 || empty(publicKey) || empty(from) || empty(to)) {
+					return;
+				}
+
+				if(!serverConnected()) {
+					Notify.error({ 
+						title: "Not Connected", 
+						description: "You aren't connected to the server.", 
+						duration: 4000
+					});
+
+					hideUpload();
+					
+					return;
+				}
+
+				let file = inputFile.files[0];
+
+				let uploader = new Uploader(socket, from, to, file, encryptionEnabled());
+
+				let reader = new ChunkReader(file, 256 * 100, 0, 0);
+				reader.createReader();
+
+				if(encryptionEnabled()) {
+					await reader.encryptChunks(publicKey);
+				}
+
+				divUploadArea.classList.add("disabled");
+
+				reader.on("chunkData", data => {
+					uploader.upload(data);
+				});
+
+				reader.on("nextChunk", (percentage, currentChunk, offset) => {
+					spanUploadSubtitle.textContent = percentage + "%";
+				});
+
+				reader.on("done", (encryption, filename) => {
+					uploader.finish();
+
+					let notificationDescription = filename + " has been uploaded without encryption.";
+					if(encryption) {
+						notificationDescription = filename + " has been uploaded with encryption.";
+					}
+
+					Notify.success({ 
+						title: "File Uploaded", 
+						description: notificationDescription, 
+						duration: 4000,
+						color: "var(--accent-contrast)",
+						background: "var(--accent-second)"
+					});
+
+					hideUpload();
+				});
+
+				reader.nextChunk();
+			} catch(error) {
+				Notify.error({
+					title: "Error",
+					description: error,
+					duration: 6000
+				});
+
+				resetUpload();
+			}
+		}
 	});
 
 	socket.on("connect", () => {
@@ -411,6 +437,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 	});
 
 	socket.on("client-list", clients => {
+		console.log(clients);
+		
 		try {
 			delete clients[localStorage.getItem("ip")];
 
@@ -441,7 +469,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 					button.textContent = "Send File";
 
 					button.addEventListener("click", () => {
-						showUpload(ip, client.username);
+						showUpload(ip, client.key, client.username);
 					});
 				} else {
 					button.textContent = "Ask Permission";
@@ -507,11 +535,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 	});
 
 	socket.on("upload", data => {
-		console.log(data);
+		if(data.chunk === 1) {
+			Notify.alert({
+				title: "Receiving File",
+				description: "You are receiving a file...",
+				color: "var(--accent-contrast)",
+				background: "var(--accent-first-transparent)",
+				duration: 8000
+			});
+
+			saver = new FileSaver(localStorage.getItem("privateKey"), data.filename, data.filesize);
+		}
+
+		saver.append(data);
 	});
 
 	socket.on("uploaded", data => {
-		console.log(data);
+		saver.save();
 	});
 
 	socket.on("update-permission", data => {
@@ -524,7 +564,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 				title: "Request Accepted", 
 				description: "You can now send files to " + clientList[data.from]["username"], 
 				duration: 4000,
-				background: "var(--accent-first)",
+				background: "var(--accent-second)",
 				color: "var(--accent-contrast)"
 			});
 		} else {
@@ -634,15 +674,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 		inputFile.type = "file";
 
 		divUpload.removeAttribute("data-client");
+		divUpload.removeAttribute("data-key");
 
 		spanUpload.textContent = `Sending File › User (127.0.0.1)`;
+		spanUploadSubtitle.innerHTML = "Drag &amp; Drop or Click";
 	}
 
-	function showUpload(ip, username) {
+	function showUpload(ip, key, username) {
 		resetUpload();
 
 		divUpload.classList.remove("hidden");
 		divUpload.setAttribute("data-client", ip);
+		divUpload.setAttribute("data-key", key);
 
 		spanUpload.textContent = `Sending File › ${username} (${ip})`;
 	}

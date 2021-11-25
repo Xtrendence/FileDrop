@@ -438,6 +438,11 @@ input[type=number] {
 	cursor:pointer;
 	border-color:var(--accent-first);
 }
+.upload-area.disabled {
+	background:var(--main-first-transparent);
+	pointer-events:none;
+	border:none;
+}
 #desktop .upload-area:hover {
 	background:var(--accent-first-transparent-low);
 }
