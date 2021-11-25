@@ -13,6 +13,7 @@ class Uploader {
 
 		if(this.part === 1) {
 			data["filesize"] = this.file.size;
+			data["filename"] = this.file.name;
 		}
 
 		data["from"] = this.from;
