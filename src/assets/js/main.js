@@ -92,6 +92,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		setStatus("Connected");
 	});
 
+	socket.on("ping", () => {
+		socket.emit("pong");
+	});
+
 	socket.on("login", username => {
 		if(empty(localStorage.getItem("privateKey")) || empty(localStorage.getItem("publicKey"))) {
 			CryptoFD.generateRSAKeys().then(keys => {
@@ -101,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				socket.emit("set-key", keys.publicKey);
 			}).catch(error => {
 				console.log(error);
-				
+
 				Notify.error({
 					title: "RSA Keys",
 					description: "Couldn't generate public/private key pair."

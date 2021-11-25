@@ -19,7 +19,7 @@ const io = require("socket.io")(server, {
 
 const dbManager = new DBManager("db");
 
-const connectionManager = new ConnectionManager(io, dbManager, 64);
+const connectionManager = new ConnectionManager(io, dbManager, 64, 5000);
 
 io.on("connection", socket => {
 	socket.on("random-username", () => {

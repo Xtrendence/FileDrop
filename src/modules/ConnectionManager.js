@@ -4,11 +4,15 @@ const DBAdapter = require("./DBAdapter");
 const utils = require("./Utils");
 
 module.exports = class ConnectionManager {
-	constructor(io, db, clientLimit = 64) {
+	constructor(io, db, clientLimit = 64, pingInterval = 2500) {
 		this.io = io;
 		this.db = db;
 		this.clientLimit = clientLimit;
 		this.clients = {};
+
+		this.ping = setInterval(() => {
+			this.io.to("network").emit("ping");
+		}, pingInterval);
 	}
 
 	async broadcastList(changed = false) {
