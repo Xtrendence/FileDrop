@@ -438,7 +438,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	socket.on("client-list", clients => {
 		console.log(clients);
-		
+
 		try {
 			delete clients[localStorage.getItem("ip")];
 
@@ -675,6 +675,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 		divUpload.removeAttribute("data-client");
 		divUpload.removeAttribute("data-key");
+
+		divUploadArea.classList.remove("disabled");
 
 		spanUpload.textContent = `Sending File › User (127.0.0.1)`;
 		spanUploadSubtitle.innerHTML = "Drag &amp; Drop or Click";
