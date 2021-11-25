@@ -187,15 +187,15 @@ class Notifier {
 			if(opacity <= 0) {
 				element.remove();
 
-				if(this.empty(container.innerHTML)) {
+				if(!this.empty(container) && this.empty(container.innerHTML)) {
 					container.remove();
 				}
-				
+
 				clearInterval(animation);
 			}
 		}, 10);
 
-		if(container.scrollHeight <= window.innerHeight) {
+		if(!this.empty(container) && container.scrollHeight <= window.innerHeight) {
 			container.style.height = "auto";
 		}
 	}
