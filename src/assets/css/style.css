@@ -169,9 +169,11 @@ input[type=number] {
 	cursor:pointer;
 	position:absolute;
 	z-index:2;
-	bottom:70px;
+	bottom:20px;
 	left:20px;
 	font-size:20px;
+	height:35px;
+	width:90px;
 	padding:5px 10px 5px 10px;
 	border-radius:var(--border-radius);
 	background:var(--main-first-transparent);

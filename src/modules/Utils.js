@@ -21,6 +21,10 @@ module.exports = {
 		return ip;
 	},
 
+	validUsername(username) {
+		return (/^[A-Za-z0-9]+$/.test(username)) ;
+	},
+
 	getUsername(clients) {
 		let words = require("./Words");
 		let available = Object.keys(words);

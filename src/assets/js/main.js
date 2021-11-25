@@ -38,6 +38,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let buttonLogout = document.getElementById("logout-button");
 
+	let savedUsername = localStorage.getItem("username");
+	if(!empty(savedUsername)) {
+		inputUsername.value = savedUsername;
+	}
+
+	inputUsername.addEventListener("keydown", (event) => {
+		if(event.key.toLowerCase() === "enter") {
+			buttonConfirmUsername.click();
+		}
+	});
+
 	buttonRandomUsername.addEventListener("click", () => {
 		socket.emit("random-username");
 	});
@@ -78,6 +89,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		inputUsername.value = username;
 	});
 
+	socket.on("username-invalid", () => {
+		Notify.error({
+			title: "Username Invalid",
+			description: "Please only use letters and numbers."
+		});
+	});
+
 	socket.on("username-taken", () => {
 		Notify.error({
 			title: "Username Taken",
@@ -90,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	socket.on("set-color", colors => {
-		login();
+		login(inputUsername.value);
 
 		let gradientStopKeys = Object.keys(gradientStops);
 	
@@ -101,7 +119,11 @@ document.addEventListener("DOMContentLoaded", () => {
 		svgBackground.style.background = colors[2];
 	});
 
-	function login() {
+	function login(username) {
+		spanServer.style.left = "120px";
+
+		localStorage.setItem("username", username);
+
 		divApp.classList.remove("hidden");
 
 		divLogin.style.opacity = 0;
@@ -113,6 +135,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	function logout() {
+		spanServer.removeAttribute("style");
+
+		localStorage.removeItem("username");
+
 		divApp.style.opacity = 0;
 
 		divLogin.style.zIndex = 1;

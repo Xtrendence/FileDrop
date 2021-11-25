@@ -27,11 +27,17 @@ io.on("connection", socket => {
 	});
 
 	socket.on("register", username => {
-		if(!connectionManager.usernameTaken(username)) {
-			connectionManager.addClient(socket, username);
-		} else {
-			socket.emit("username-taken");
+		if(!utils.validUsername(username)) {
+			socket.emit("username-invalid");
+			return;
 		}
+
+		if(connectionManager.usernameTaken(username)) {
+			socket.emit("username-taken");
+			return;
+		}
+
+		connectionManager.addClient(socket, username);
 	});
 
 	socket.on("logout", () => {
