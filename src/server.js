@@ -22,6 +22,10 @@ const dbManager = new DBManager("db");
 const connectionManager = new ConnectionManager(io, dbManager, 64);
 
 io.on("connection", socket => {
+	socket.on("random-username", () => {
+		socket.emit("random-username", utils.getUsername(connectionManager.clients));
+	});
+
 	socket.on("register", username => {
 		if(!connectionManager.usernameTaken(username)) {
 			connectionManager.addClient(socket, username);

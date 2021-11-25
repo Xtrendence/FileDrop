@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let buttonConfirmUsername = document.getElementById("confirm-username-button");
 
 	buttonRandomUsername.addEventListener("click", () => {
-
+		socket.emit("random-username");
 	});
 
 	buttonConfirmUsername.addEventListener("click", () => {
@@ -59,6 +59,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	socket.on("notify", notification => {
 		Notify.info(notification);
+	});
+
+	socket.on("random-username", username => {
+		inputUsername.value = username;
 	});
 
 	socket.on("username-taken", () => {

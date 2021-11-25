@@ -21,6 +21,25 @@ module.exports = {
 		return ip;
 	},
 
+	getUsername(clients) {
+		let words = require("./Words");
+		let available = Object.keys(words);
+
+		let ips = Object.keys(clients);
+		ips.map(ip => {
+			let index = available.indexOf([clients[ip]["username"]]);
+			if(index > -1) {
+				available.splice(index, 1);
+			}
+		});
+
+		let max = available.length - 1;
+
+		let random = this.randomBetween(0, max);
+
+		return words[available[random]];
+	},
+
 	getColor(address, clients) {
 		let colors = require("./Colors");
 		let available = Object.keys(colors);
