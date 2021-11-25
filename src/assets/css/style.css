@@ -273,7 +273,7 @@ input[type=number] {
 	right:-200px;
 	width:200px;
 	height:auto;
-	max-height:300px;
+	max-height:340px;
 	transition:right 0.25s ease-in-out;
 	overflow:hidden auto;
 	border-radius:var(--border-radius);
@@ -363,6 +363,9 @@ input[type=number] {
 #desktop .settings-wrapper .section-button:hover {
 	background:var(--main-third);
 }
+#settings-logout-button {
+	display:none;
+}
 
 .server-button, .logout-button {
 	cursor:pointer;
@@ -392,6 +395,9 @@ input[type=number] {
 	bottom:20px;
 	background:rgba(0,0,0,0.5);
 	color:rgb(255,255,255);
+}
+.server-button.logged-in {
+	left:120px;
 }
 .server-button.active {
 	color:var(--main-contrast-light);

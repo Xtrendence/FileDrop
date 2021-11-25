@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let divSettings = document.getElementById("settings-wrapper");
 
 	let buttonClearStorage = document.getElementById("clear-storage-button");
+	let buttonSettingsLogout = document.getElementById("settings-logout-button");
 	let toggleTheme = document.getElementById("theme-toggle");
 	let toggleEncryption = document.getElementById("encryption-toggle");
 	let toggleAutoLogin = document.getElementById("auto-login-toggle");
@@ -127,6 +128,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		setTimeout(() => {
 			window.location.reload();
 		}, 2500);
+	});
+
+	buttonSettingsLogout.addEventListener("click", () => {
+		buttonLogout.click();
 	});
 
 	toggleTheme.addEventListener("click", () => {
@@ -308,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	function login(username) {
-		buttonServer.style.left = "120px";
+		buttonServer.classList.add("logged-in");
 
 		localStorage.setItem("username", username);
 
@@ -329,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	function logout() {
-		buttonServer.removeAttribute("style");
+		buttonServer.classList.remove("logged-in");
 
 		localStorage.removeItem("username");
 
@@ -351,12 +356,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	function setStatus(status) {
-		let content = `${ip}:${port} | ${status}`;
+		let html = `<span>${ip}:${port}</span><span class="separator"> | </span><span>${status}</span>`;
 		if(!divApp.classList.contains("hidden") && !empty(localStorage.getItem("username"))) {
-			content = `${ip}:${port} | ${status} as ${localStorage.getItem("username")}`;
+			html = `<span>${ip}:${port}</span><span class="separator"> | </span><span>${status} as ${localStorage.getItem("username")}</span>`;
 		}
 
-		buttonServer.textContent = content;
+		buttonServer.innerHTML = html;
 
 		switch(status) {
 			case "Connected":

@@ -1,0 +1,34 @@
+@media screen and (max-width:800px) {
+	.server-button {
+		height:90px;
+		padding:0 20px 0 20px;
+	}
+	.server-button.logged-in {
+		left:20px;
+	}
+	.server-button span {
+		display:block;
+		line-height:34px;
+	}
+	.server-button .separator {
+		display:none;
+	}
+	.logout-button {
+		display:none;
+	}
+	#settings-logout-button {
+		display:block;
+	}
+}
+
+@media screen and (max-width:420px) {
+	.server-button {
+		width:calc(100% - 40px);
+	}
+	.settings-button {
+		bottom:130px;
+	}
+	.settings-wrapper {
+		bottom:130px;
+	}
+}
