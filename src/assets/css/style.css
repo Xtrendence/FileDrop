@@ -92,6 +92,7 @@ input[type=number] {
 	backdrop-filter:blur(2px);
 	font-weight:bold;
 	color:var(--main-contrast-light);
+	box-shadow:var(--shadow-smooth);
 }
 
 .login-container {
@@ -152,6 +153,113 @@ input[type=number] {
 	min-height:100%;
 }
 
+.round-button {
+	cursor:pointer;
+	height:48px;
+	width:48px;
+	padding:0;
+	border-radius:50%;
+	background:var(--main-first-transparent);
+	backdrop-filter:blur(2px);
+}
+.round-button svg {
+	margin-top:2px;
+	width:32px;
+	height:32px;
+	fill:var(--main-contrast-light);
+}
+.round-button:hover {
+	background:var(--main-first);
+}
+
+.settings-button {
+	z-index:11;
+	bottom:20px;
+	right:20px;
+	position:absolute;
+	box-shadow:var(--shadow-smooth);
+}
+
+.settings-wrapper {
+	z-index:11;
+	bottom:20px;
+	right:-200px;
+	width:200px;
+	height:auto;
+	max-height:200px;
+	transition:right 0.25s ease-in-out;
+	overflow:hidden auto;
+	border-radius:var(--border-radius);
+	position:absolute;
+	background:var(--main-first-transparent);
+	backdrop-filter:blur(2px);
+	box-shadow:var(--shadow-smooth);
+}
+.settings-wrapper .section {
+	display:block;
+	background:var(--main-second);
+	margin:10px;
+	box-shadow:var(--shadow-smooth);
+	border-radius:var(--border-radius);
+	padding:10px;
+}
+.settings-wrapper .section .title {
+	display:inline-block;
+	font-size:16px;
+	font-weight:bold;
+	color:var(--main-contrast-light);
+	vertical-align:top;
+	line-height:25px;
+}
+.settings-wrapper .section .toggle-wrapper {
+	float:right;
+}
+.toggle-wrapper {
+	width:50px;
+	height:25px;
+	background:var(--main-third);
+	border-radius:12.5px;
+	position:relative;
+	cursor:pointer;
+	display:inline-block;
+	box-shadow:var(--shadow-smooth);
+}
+.toggle-wrapper.active {
+	background:var(--accent-first);
+}
+.toggle-container {
+	width:25px;
+	height:25px;
+	border-radius:50%;
+	background:var(--main-fifth);
+	transition:0.25s;
+	left:0;
+	top:0;
+	position:absolute;
+}
+.toggle-wrapper.active .toggle-container {
+	left:25px;
+	background:var(--main-fourth);
+}
+.toggle-container svg {
+	width:15px;
+	height:15px;
+	padding:5px;
+	fill:var(--accent-first);
+}
+.toggle-container .moon-icon {
+	display:block;
+}
+.toggle-wrapper.active .moon-icon {
+	display:none;
+}
+.toggle-wrapper.active .sun-icon {
+	display:block;
+}
+.sun-icon {
+	display:none;
+}
+
 .server-button, .logout-button {
 	cursor:pointer;
 	position:absolute;
@@ -167,6 +275,7 @@ input[type=number] {
 	backdrop-filter:blur(2px);
 	font-weight:bold;
 	color:var(--main-contrast-light);
+	box-shadow:var(--shadow-smooth);
 }
 #desktop .server-button:hover, #desktop .logout-button:hover {
 	background:var(--main-first);

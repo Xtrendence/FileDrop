@@ -8,6 +8,7 @@ FileDrop is an application that allows for encrypted file sharing between two us
 |----------------------|---------------------------------------------------|
 |Login Background      |[BG Jar](https://bgjar.com/)                       |
 |Main Background       |[SVG Backgrounds](https://www.svgbackgrounds.com/) |
+|Font Awesome          |[Font Awesome](https://www.fontawesome.com/)       |
 |Jest                  |[NPM](https://www.npmjs.com/package/jest)          |
 |CORS                  |[NPM](https://www.npmjs.com/package/cors)          |
 |EJS                   |[NPM](https://www.npmjs.com/package/ejs)           |

@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	const Notify = new Notifier("TopLeft");
 
+	let html = document.getElementsByTagName("html")[0];
 	let body = document.getElementsByTagName("body")[0];
 
 	if(detectMobile()) {
@@ -31,6 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	let divLogin = document.getElementById("login-wrapper");
 	let divApp = document.getElementById("app-wrapper");
 
+	let buttonSettings = document.getElementById("settings-button");
+
+	let divSettings = document.getElementById("settings-wrapper");
+
+	let toggleTheme = document.getElementById("theme-toggle");
+	let toggleEncryption = document.getElementById("encryption-toggle");
+
 	let buttonServer = document.getElementById("server-button");
 
 	let inputUsername = document.getElementById("input-username");
@@ -44,6 +52,23 @@ document.addEventListener("DOMContentLoaded", () => {
 	if(!empty(savedUsername)) {
 		inputUsername.value = savedUsername;
 	}
+
+	let savedTheme = localStorage.getItem("theme");
+	if(!empty(savedTheme)) {
+		setTheme(savedTheme);
+	}
+
+	divLogin.addEventListener("click", () => {
+		if(!divSettings.classList.contains("hidden")) {
+			hideSettings();
+		}
+	});
+
+	divApp.addEventListener("click", () => {
+		if(!divSettings.classList.contains("hidden")) {
+			hideSettings();
+		}
+	});
 
 	buttonServer.addEventListener("click", () => {
 		if(buttonServer.classList.contains("active") || buttonServer.classList.contains("processing")) {
@@ -69,6 +94,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	buttonConfirmUsername.addEventListener("click", () => {
 		socket.emit("register", inputUsername.value);
+	});
+
+	buttonSettings.addEventListener("click", () => {
+		if(divSettings.classList.contains("hidden")) {
+			showSettings();
+		} else {
+			hideSettings();
+		}
+	});
+
+	toggleTheme.addEventListener("click", () => {
+		if(toggleTheme.classList.contains("active")) {
+			setTheme("dark");
+		} else {
+			setTheme("light");
+		}
+	});
+
+	toggleEncryption.addEventListener("click", () => {
+		if(toggleEncryption.classList.contains("active")) {
+			toggleEncryption.classList.remove("active");
+		} else {
+			toggleEncryption.classList.add("active");
+		}
 	});
 
 	buttonLogout.addEventListener("click", () => {
@@ -164,6 +213,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		svgBackground.style.background = colors[2];
 	});
+
+	function setTheme(theme) {
+		switch(theme) {
+			case "light":
+				html.classList.add("light");
+				html.classList.remove("dark");
+				toggleTheme.classList.add("active");
+				localStorage.setItem("theme", "light");
+				break;
+			case "dark":
+				html.classList.remove("light");
+				html.classList.add("dark");
+				toggleTheme.classList.remove("active");
+				localStorage.setItem("theme", "dark");
+				break;
+		}
+	}
+
+	function showSettings() {
+		buttonSettings.classList.add("hidden");
+		divSettings.classList.remove("hidden");
+		setTimeout(() => {
+			divSettings.style.right = "20px";
+		}, 10);
+	}
+
+	function hideSettings() {
+		divSettings.removeAttribute("style");
+		setTimeout(() => {
+			buttonSettings.classList.remove("hidden");
+			divSettings.classList.add("hidden");
+		}, 350);
+	}
 
 	function login(username) {
 		buttonServer.style.left = "120px";
