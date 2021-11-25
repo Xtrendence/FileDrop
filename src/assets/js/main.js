@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 			console.log(error);
 		});
 	}
-	
+
 	let manualDisconnect = false;
 	let requiresReconnect = false;
 
@@ -70,6 +70,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 	let divClients = document.getElementById("clients-wrapper");
 	let divUpload = document.getElementById("upload-wrapper");
 	let divUploadArea = document.getElementById("upload-area");
+	let divProgress = document.getElementById("progress-wrapper");
+	let divProgressForeground = document.getElementById("progress-foreground");
 
 	let inputFile = document.getElementById("upload-file");
 
@@ -263,7 +265,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 	};
 
 	inputFile.addEventListener("change", () => {
-		spanUploadSubtitle.textContent = inputFile.files[0].name;
+		if(inputFile.files.length !== 0) {
+			spanUploadSubtitle.textContent = inputFile.files[0].name;
+		} else {
+			hideUpload();
+		}
 	});
 
 	buttonUpload.addEventListener("click", async () => {
@@ -305,6 +311,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 					await reader.encryptChunks(publicKey);
 				}
 
+				divProgress.classList.remove("hidden");
+
 				divUploadArea.classList.add("disabled");
 
 				reader.on("chunkData", data => {
@@ -313,6 +321,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 				reader.on("nextChunk", (percentage, currentChunk, offset) => {
 					spanUploadSubtitle.textContent = percentage + "%";
+
+					divProgressForeground.style.width = percentage + "%";
 				});
 
 				reader.on("done", (encryption, filename) => {
@@ -342,7 +352,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 					duration: 6000
 				});
 
-				resetUpload();
+				hideUpload();
 			}
 		}
 	});
@@ -676,6 +686,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 		spanUpload.textContent = `Sending File › User (127.0.0.1)`;
 		spanUploadSubtitle.innerHTML = "Drag &amp; Drop or Click";
+
+		divProgressForeground.style.width = 0;
+		divProgress.classList.add("hidden");
 	}
 
 	function showUpload(ip, key, username) {

@@ -446,6 +446,40 @@ input[type=number] {
 #desktop .upload-area:hover {
 	background:var(--accent-first-transparent-low);
 }
+.progress-wrapper {
+	height:40px;
+	width:200px;
+	top:calc(50% - 40px / 2);
+	left:calc(50% - 200px / 2);
+	position:absolute;
+	z-index:14;
+	overflow:hidden;
+	border-radius:20px;
+	margin-bottom:10px;
+}
+#progress-background {
+	background:rgb(20,20,20);
+	height:100%;
+	width:100%;
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:2;
+}
+#progress-foreground {
+	background:var(--blue-gradient);
+	background-size:1400% 1400%;
+	-webkit-animation:load-animation 4s ease infinite;
+	-moz-animation:load-animation 4s ease infinite;
+	-o-animation:load-animation 4s ease infinite;
+	animation:load-animation 4s ease infinite;
+	height:100%;
+	width:50%;
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:3;
+}
 .upload-area span {
 	position:absolute;
 	text-align:center;
@@ -569,4 +603,49 @@ input[type=number] {
 .x-notification .accept {
 	margin-left:10px;
 	background:var(--accent-first);
+}
+
+@-webkit-keyframes load-animation {
+	0% { 
+		background-position:7% 0%
+	}
+	50% { 
+		background-position:94% 100%
+	}
+	100% { 
+		background-position:7% 0%
+	}
+}
+@-moz-keyframes load-animation {
+	0% { 
+		background-position:7% 0%
+	}
+	50% { 
+		background-position:94% 100%
+	}
+	100% { 
+		background-position:7% 0%
+	}
+}
+@-o-keyframes load-animation {
+	0% { 
+		background-position:7% 0%
+	}
+	50% { 
+		background-position:94% 100%
+	}
+	100% { 
+		background-position:7% 0%
+	}
+}
+@keyframes load-animation {
+	0% { 
+		background-position:7% 0%
+	}
+	50% { 
+		background-position:94% 100%
+	}
+	100% { 
+		background-position:7% 0%
+	}
 }
