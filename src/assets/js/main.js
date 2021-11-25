@@ -50,7 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
 			socket.disconnect();
 		} else {
 			socket.connect();
-			socket.emit("register", localStorage.getItem("username"));
+
+			if(divLogin.classList.contains("hidden") && !empty(localStorage.getItem("username"))) {
+				socket.emit("register", localStorage.getItem("username"));
+			}
 		}
 	});
 
@@ -73,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	socket.on("connect", () => {
-		if(autoLogin && !empty(savedUsername) && !divLogin.classList.contains("hidden")) {
+		if(autoLogin && !empty(savedUsername) && !divLogin.classList.contains("hidden") && !empty(inputUsername.value)) {
 			setTimeout(() => buttonConfirmUsername.click(), 625);
 		}
 
@@ -85,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	socket.on("reconnection_attempt", () => {
-		setStatus("Reconnecting...");
+		setStatus("Reconnecting");
 	});
 
 	socket.on("reconnect", () => {
@@ -94,6 +97,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	socket.on("ping", () => {
 		socket.emit("pong");
+	});
+
+	socket.on("set-ip", ip => {
+		localStorage.setItem("ip", ip);
 	});
 
 	socket.on("login", username => {
@@ -166,6 +173,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		divApp.classList.remove("hidden");
 
 		divLogin.style.opacity = 0;
+		
+		setStatus("Connected");
 
 		setTimeout(() => {
 			divLogin.removeAttribute("style");
@@ -185,6 +194,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		divLogin.style.zIndex = 1;
 		divLogin.classList.remove("hidden");
 
+		setStatus("Connected");
+
 		setTimeout(() => {
 			divApp.removeAttribute("style");
 			divApp.classList.add("hidden");
@@ -194,14 +205,19 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	function setStatus(status) {
-		buttonServer.textContent = `${ip}:${port} | ${status}`;
+		let content = `${ip}:${port} | ${status}`;
+		if(!divApp.classList.contains("hidden") && !empty(localStorage.getItem("username"))) {
+			content = `${ip}:${port} | ${status} as ${localStorage.getItem("username")}`;
+		}
+
+		buttonServer.textContent = content;
 
 		switch(status) {
 			case "Connected":
 				buttonServer.classList.add("active");
 				buttonServer.classList.remove("processing");
 				break;
-			case "Reconnecting...":
+			case "Reconnecting":
 				buttonServer.classList.remove("active");
 				buttonServer.classList.add("processing");
 				break;

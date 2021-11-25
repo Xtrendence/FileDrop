@@ -21,7 +21,7 @@ module.exports = class ConnectionManager {
 		socket.on("disconnect", async () => {
 			socket.leave("network");
 
-			permissionManager.off("change");
+			this.clients[address]?.permissionManager.off("change");
 
 			await this.removeClient(address);
 		});
@@ -41,7 +41,7 @@ module.exports = class ConnectionManager {
 		if(changed) {
 			let list = [];
 			Object.keys(clients).map(ip => {
-				list.push(`${ip} - ${clients[ip]["username"]}`);
+				list.push(`${ip} => ${clients[ip]["username"]}`);
 			});
 
 			console.log(utils.epoch(), ": \x1b[33m", list, "\x1b[0m");
