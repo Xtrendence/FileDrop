@@ -57,6 +57,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	let buttonConfirmUsername = document.getElementById("confirm-username-button");
 
 	let divClients = document.getElementById("clients-wrapper");
+	let divUpload = document.getElementById("upload-wrapper");
+	let divUploadArea = document.getElementById("upload-area");
+
+	let inputFile = document.getElementById("upload-file");
+
+	let buttonUploadCancel = document.getElementById("upload-cancel-button");
+	let buttonUpload = document.getElementById("upload-button");
+
+	let spanUpload = document.getElementById("upload-title");
 
 	let buttonLogout = document.getElementById("logout-button");
 
@@ -216,6 +225,32 @@ document.addEventListener("DOMContentLoaded", () => {
 		socket.emit("logout");
 	});
 
+	buttonUploadCancel.addEventListener("click", () => {
+		hideUpload();
+	});
+
+	divUploadArea.addEventListener("click", () => {
+		inputFile.click();
+	});
+
+	divUploadArea.ondragover = divUploadArea.ondragenter = (event) => {
+		event.preventDefault();
+	};
+
+	divUploadArea.ondrop = function (event) {
+		inputFile.files = event.dataTransfer.files;
+		inputFile.dispatchEvent(new Event("change"));
+		event.preventDefault();
+	};
+
+	inputFile.addEventListener("change", (event) => {
+		console.log(inputFile.files);
+	});
+
+	buttonUpload.addEventListener("click", () => {
+
+	});
+
 	socket.on("connect", () => {
 		if(autoLogin === "true" && !empty(savedUsername) && !divLogin.classList.contains("hidden") && !empty(inputUsername.value)) {
 			setTimeout(() => buttonConfirmUsername.click(), 625);
@@ -347,7 +382,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				button.textContent = "Send File";
 
 				button.addEventListener("click", () => {
-					
+					showUpload(ip, username);
 				});
 			} else {
 				button.textContent = "Ask Permission";
@@ -509,6 +544,26 @@ document.addEventListener("DOMContentLoaded", () => {
 		for(let i = 0; i < document.getElementsByClassName("loading-screen").length; i++) {
 			document.getElementsByClassName("loading-screen")[i].remove();
 		}
+	}
+
+	function resetUpload() {
+		divUpload.removeAttribute("data-client");
+
+		spanUpload.textContent = `Sending File › User`;
+	}
+
+	function showUpload(ip, username) {
+		resetUpload();
+
+		divUpload.classList.remove("hidden");
+		divUpload.setAttribute("data-client", ip);
+
+		spanUpload.textContent = `Sending File › ${username} (${ip})`;
+	}
+
+	function hideUpload() {
+		divUpload.classList.add("hidden");
+		resetUpload();
 	}
 
 	function login(username) {

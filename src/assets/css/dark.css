@@ -1,7 +1,7 @@
 html.dark {
 	--shadow-dark:0 6px 10px rgba(40,40,40,0.25);
 	--shadow-darker:0 6px 10px rgba(40,40,40,0.4);
-	--shadow-smooth:0 1px 1px rgba(0,0,0,0.08), 0 2px 2px rgba(0,0,0,0.05), 0 4px 4px rgba(0,0,0,0.06), 0 8px 8px rgba(0,0,0,0.1);
+	--shadow-smooth:0 1px 1px rgba(0,0,0,0.08),0 2px 2px rgba(0,0,0,0.05),0 4px 4px rgba(0,0,0,0.06),0 8px 8px rgba(0,0,0,0.1);
 	--shadow-accent:0 0 12px rgba(0,150,255,0.9);
 	--main-first:rgb(20,20,20);
 	--main-first-transparent:rgba(20,20,20,0.6);
@@ -13,25 +13,27 @@ html.dark {
 	--main-contrast:rgb(255,255,255);
 	--main-contrast-light:rgb(245,245,245);
 	--main-contrast-lightest:rgb(200,200,200);
-	--accent-first:rgb(137, 121, 211);
-	--accent-second:rgb(72, 137, 221);
-	--accent-third:rgb(25, 165, 207);
-	--accent-fourth:rgb(12, 199, 209);
-	--accent-fifth:rgb(206, 98, 218);
-	--accent-gradient:linear-gradient(15deg, var(--accent-first) 25%, var(--accent-second) 50%, var(--accent-third) 75%, var(--accent-fourth) 100%);
-	--colorful-gradient:linear-gradient(300deg, #8a2387, #e94057, #f27121);
-	--orange-gradient:linear-gradient(150deg, rgb(245,175,25) 30%, rgb(241,39,17) 100%);
-	--green-gradient:linear-gradient(20deg, #67b26f, #4ca2cd);
-	--calm-gradient:linear-gradient(20deg, #5f2c82, #49a09d);
-	--blue-gradient:linear-gradient(to right, #4facfe 0%, #00bdc7 100%);
-	--purple-gradient:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	--greener-gradient:linear-gradient(to right, #11998e, #38ef7d);
-	--cosmic-gradient:linear-gradient(330deg, #ff00cc, #333399);
-	--playful-gradient:linear-gradient(340deg, #fc00ff, #27bcbe);
-	--atlas-gradient:linear-gradient(300deg, #feac5e, #c779d0, #4bc0c8);
+	--accent-first:rgb(137,121,211);
+	--accent-first-transparent:rgba(137,121,211,0.25);
+	--accent-first-transparent-low:rgba(137,121,211,0.5);
+	--accent-second:rgb(72,137,221);
+	--accent-third:rgb(25,165,207);
+	--accent-fourth:rgb(12,199,209);
+	--accent-fifth:rgb(206,98,218);
+	--accent-gradient:linear-gradient(15deg,var(--accent-first) 25%,var(--accent-second) 50%,var(--accent-third) 75%,var(--accent-fourth) 100%);
+	--colorful-gradient:linear-gradient(300deg,#8a2387,#e94057,#f27121);
+	--orange-gradient:linear-gradient(150deg,rgb(245,175,25) 30%,rgb(241,39,17) 100%);
+	--green-gradient:linear-gradient(20deg,#67b26f,#4ca2cd);
+	--calm-gradient:linear-gradient(20deg,#5f2c82,#49a09d);
+	--blue-gradient:linear-gradient(to right,#4facfe 0%,#00bdc7 100%);
+	--purple-gradient:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+	--greener-gradient:linear-gradient(to right,#11998e,#38ef7d);
+	--cosmic-gradient:linear-gradient(330deg,#ff00cc,#333399);
+	--playful-gradient:linear-gradient(340deg,#fc00ff,#27bcbe);
+	--atlas-gradient:linear-gradient(300deg,#feac5e,#c779d0,#4bc0c8);
 	--accent-contrast:rgb(255,255,255);
 	--border-radius:10px;
-	--font-family:"Helvetica Neue", "Lucida Grande", "Arial", "Verdana", "Tahoma", sans-serif;
+	--font-family:"Helvetica Neue","Lucida Grande","Arial","Verdana","Tahoma",sans-serif;
 }
 html.dark.reduce-border-radius {
 	--border-radius:5px;
