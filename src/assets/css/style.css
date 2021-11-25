@@ -14,7 +14,7 @@ input, button {
 	border:none;
 }
 div, span, input, button, textarea {
-	transition:background 0.25s, color 0.25s;
+	transition:background 0.25s, color 0.25s, border-radius 0.25s;
 }
 a {
 	text-decoration:none;
@@ -270,10 +270,10 @@ input[type=number] {
 .settings-wrapper {
 	z-index:11;
 	bottom:20px;
-	right:-200px;
-	width:200px;
+	right:-220px;
+	width:220px;
 	height:auto;
-	max-height:340px;
+	max-height:400px;
 	transition:right 0.25s ease-in-out;
 	overflow:hidden auto;
 	border-radius:var(--border-radius);

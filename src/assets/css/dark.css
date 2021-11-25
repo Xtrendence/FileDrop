@@ -33,3 +33,9 @@ html.dark {
 	--border-radius:10px;
 	--font-family:"Helvetica Neue", "Lucida Grande", "Arial", "Verdana", "Tahoma", sans-serif;
 }
+html.dark.reduce-border-radius {
+	--border-radius:5px;
+}
+html.dark.no-border-radius {
+	--border-radius:1px;
+}

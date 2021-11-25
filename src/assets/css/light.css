@@ -33,3 +33,9 @@ html.light {
 	--border-radius:10px;
 	--font-family:"Helvetica Neue", "Lucida Grande", "Arial", "Verdana", "Tahoma", sans-serif;
 }
+html.light.reduce-border-radius {
+	--border-radius:5px;
+}
+html.light.no-border-radius {
+	--border-radius:1px;
+}

@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let toggleTheme = document.getElementById("theme-toggle");
 	let toggleEncryption = document.getElementById("encryption-toggle");
 	let toggleAutoLogin = document.getElementById("auto-login-toggle");
+	let toggleRoundedUI = document.getElementById("rounded-ui-toggle");
 
 	let buttonServer = document.getElementById("server-button");
 
@@ -66,6 +67,36 @@ document.addEventListener("DOMContentLoaded", () => {
 	if(!empty(savedTheme)) {
 		setTheme(savedTheme);
 	}
+
+	let savedRoundedUI = localStorage.getItem("roundedUI");
+	if(!empty(savedRoundedUI)) {
+		setRoundedUI(savedRoundedUI);
+	}
+
+	let keysDown = [];
+
+	document.addEventListener("keydown", (event) => {
+		let key = event.key.toLowerCase();
+		if(!keysDown.includes(key)) {
+			keysDown.push(key);
+		}
+
+		if(!divSettings.classList.contains("hidden") && (keysDown.join("-") === "shift-b" || keysDown.join("-") === "b-shift")) {
+			if(localStorage.getItem("roundedUI") === "none") {
+				setRoundedUI("true");
+			} else {
+				setRoundedUI("none");
+			}
+		}
+	});
+
+	document.addEventListener("keyup", (event) => {
+		let key = event.key.toLowerCase();
+		if(keysDown.includes(key)) {
+			let index = keysDown.indexOf(key);
+			keysDown.splice(index, 1);
+		}
+	});
 
 	divLogin.addEventListener("click", () => {
 		if(!divSettings.classList.contains("hidden")) {
@@ -115,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	buttonClearStorage.addEventListener("click", () => {
 		logout();
-		
+
 		localStorage.clear();
 
 		showLoading(5000);
@@ -156,6 +187,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		} else {
 			toggleAutoLogin.classList.add("active");
 			localStorage.setItem("autoLogin", "true");
+		}
+	});
+	
+	toggleRoundedUI.addEventListener("click", () => {
+		if(toggleRoundedUI.classList.contains("active")) {
+			setRoundedUI("false");
+		} else {
+			setRoundedUI("true");
 		}
 	});
 
@@ -209,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			});
 		} else {
-			socket.emit("set-key", ">" + localStorage.getItem("publicKey"));
+			socket.emit("set-key", localStorage.getItem("publicKey"));
 		}
 
 		login(username);
@@ -288,6 +327,26 @@ document.addEventListener("DOMContentLoaded", () => {
 				toggleTheme.classList.remove("active");
 				localStorage.setItem("theme", "dark");
 				break;
+		}
+	}
+
+	function setRoundedUI(roundedUI) {
+		localStorage.setItem("roundedUI", roundedUI);
+
+		if(roundedUI === "none") {
+			toggleRoundedUI.classList.remove("active");
+			html.classList.add("no-border-radius");
+			return;
+		}
+		
+		html.classList.remove("no-border-radius");
+
+		if(roundedUI === "false") {
+			toggleRoundedUI.classList.remove("active");
+			html.classList.add("reduce-border-radius");
+		} else {
+			toggleRoundedUI.classList.add("active");
+			html.classList.remove("reduce-border-radius");
 		}
 	}
 
