@@ -101,7 +101,6 @@ input[type=number] {
 	border-radius:var(--border-radius);
 	background:var(--main-first-transparent);
 	box-shadow:var(--shadow-smooth);
-	opacity:0.97;
 	backdrop-filter:blur(2px);
 	position:absolute;
 	width:260px;
@@ -120,6 +119,7 @@ input[type=number] {
 	font-size:16px;
 	font-weight:bold;
 	color:var(--main-contrast-light);
+	box-shadow:var(--shadow-smooth);
 }
 .login-container input::placeholder {
 	color:var(--main-contrast-lightest);
@@ -138,6 +138,7 @@ input[type=number] {
 	font-weight:bold;
 	background:var(--main-first);
 	color:var(--main-contrast-light);
+	box-shadow:var(--shadow-smooth);
 }
 #desktop .login-container div button:hover {
 	background:var(--accent-first);
@@ -259,6 +260,23 @@ input[type=number] {
 .sun-icon {
 	display:none;
 }
+.settings-wrapper .section-button {
+	display:block;
+	background:var(--main-second);
+	margin:10px;
+	width:calc(100% - 20px);
+	height:45px;
+	font-size:16px;
+	cursor:pointer;
+	box-shadow:var(--shadow-smooth);
+	border-radius:var(--border-radius);
+	color:var(--main-contrast);
+	font-weight:bold;
+	padding:0;
+}
+#desktop .settings-wrapper .section-button:hover {
+	background:var(--main-third);
+}
 
 .server-button, .logout-button {
 	cursor:pointer;
@@ -287,7 +305,7 @@ input[type=number] {
 	top:auto;
 	bottom:20px;
 	background:rgba(0,0,0,0.5);
-	color:var(--main-first);
+	color:rgb(255,255,255);
 }
 .server-button.active {
 	color:var(--main-contrast-light);

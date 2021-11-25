@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let divSettings = document.getElementById("settings-wrapper");
 
+	let buttonClearStorage = document.getElementById("clear-storage-button");
 	let toggleTheme = document.getElementById("theme-toggle");
 	let toggleEncryption = document.getElementById("encryption-toggle");
 
@@ -102,6 +103,20 @@ document.addEventListener("DOMContentLoaded", () => {
 		} else {
 			hideSettings();
 		}
+	});
+
+	buttonClearStorage.addEventListener("click", () => {
+		logout();
+		localStorage.clear();
+
+		Notify.alert({
+			title: "Storage Cleared",
+			description: "Refreshing..."
+		});
+
+		setTimeout(() => {
+			window.location.reload();
+		}, 500);
 	});
 
 	toggleTheme.addEventListener("click", () => {
@@ -270,6 +285,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		buttonServer.removeAttribute("style");
 
 		localStorage.removeItem("username");
+
+		inputUsername.value = "";
 
 		divApp.style.opacity = 0;
 
