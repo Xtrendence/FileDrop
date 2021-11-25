@@ -39,10 +39,14 @@ module.exports = {
 	},
 
 	xssValid(string) {
-		if(string.includes("<") || string.includes(">")) {
+		try {
+			if(string.includes("<") || string.includes(">")) {
+				return false;
+			}
+			return true;
+		} catch(error) {
 			return false;
 		}
-		return true;
 	},
 
 	getUsername(clients) {

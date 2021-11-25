@@ -32,18 +32,18 @@ io.on("connection", socket => {
 			socket.emit("random-username", utils.getUsername(connectionManager.clients));
 		});
 
-		socket.on("register", username => {
-			if(!utils.validUsername(username)) {
+		socket.on("register", data => {
+			if(!utils.validUsername(data.username)) {
 				socket.emit("username-invalid");
 				return;
 			}
 
-			if(connectionManager.usernameTaken(username)) {
+			if(connectionManager.usernameTaken(data.username)) {
 				socket.emit("username-taken");
 				return;
 			}
 
-			connectionManager.addClient(socket, username);
+			connectionManager.addClient(socket, data.username, data.key);
 		});
 
 		socket.on("logout", () => {

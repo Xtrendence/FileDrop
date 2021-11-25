@@ -116,45 +116,59 @@ module.exports = class ConnectionManager {
 		}
 	}
 
-	async addClient(socket, username) {
-		if(!this.clientLimitReached()) {
-			let address = socket.handshake.address;
+	async addClient(socket, username, key) {
+		let address = socket.handshake.address;
 
-			if(this.clientExists(address)) {
-				await this.removeClient(address);
+		if(utils.xssValid(key)) {
+			if(!this.clientLimitReached()) {
+				if(this.clientExists(address)) {
+					await this.removeClient(address);
+				}
+
+				socket.join("network");
+
+				let color = utils.getColor(address, this.clients);
+			
+				this.permissionManager.attach(socket);
+			
+				let uploadManager = new UploadManager(this, this.permissionManager);
+				uploadManager.attach(socket);
+
+				this.permissionManager.on("change", (state) => {
+					this.clients[address]["permissionManager"] = state;
+					uploadManager.updatePermissionManager(state);
+				});
+
+				this.clients[address] = { socket:socket, username:username, key:null, uploadManager:uploadManager, permissionManager:this.permissionManager, color:color.index };
+
+				this.attach(socket);
+
+				socket.emit("set-color", color.colors);
+				socket.emit("login", username);
+
+				await this.saveClients();
+				await this.broadcastList(true);
+			} else {
+				socket.emit("notify", { 
+					title: "Limit Reached", 
+					description: "Maximum number of devices are connected to the server.", 
+					duration: 30000, 
+					background: "rgb(230,20,20)",
+					color: "rgb(255,255,255)"
+				});
 			}
-
-			socket.join("network");
-
-			let color = utils.getColor(address, this.clients);
-			
-			this.permissionManager.attach(socket);
-			
-			let uploadManager = new UploadManager(this, this.permissionManager);
-			uploadManager.attach(socket);
-
-			this.permissionManager.on("change", (state) => {
-				this.clients[address]["permissionManager"] = state;
-				uploadManager.updatePermissionManager(state);
-			});
-
-			this.clients[address] = { socket:socket, username:username, key:null, uploadManager:uploadManager, permissionManager:this.permissionManager, color:color.index };
-
-			this.attach(socket);
-
-			socket.emit("set-color", color.colors);
-			socket.emit("login", username);
-
-			await this.saveClients();
-			await this.broadcastList(true);
 		} else {
 			socket.emit("notify", { 
-				title: "Limit Reached", 
-				description: "Maximum number of devices are connected to the server.", 
-				duration: 30000, 
+				title: "Invalid Key", 
+				description: "The provided key contains invalid characters.", 
+				duration: 4000, 
 				background: "rgb(230,20,20)",
 				color: "rgb(255,255,255)"
 			});
+
+			socket.emit("kick");
+
+			this.removeClient(address);
 		}
 	}
 

@@ -1,4 +1,13 @@
 document.addEventListener("DOMContentLoaded", async () => {
+	if(empty(localStorage.getItem("privateKey")) || empty(localStorage.getItem("publicKey"))) {
+		CryptoFD.generateRSAKeys().then(keys => {
+			localStorage.setItem("privateKey", keys.privateKey);
+			localStorage.setItem("publicKey", keys.publicKey);
+		}).catch(error => {
+			console.log(error);
+		});
+	}
+	
 	let manualDisconnect = false;
 	let requiresReconnect = false;
 
@@ -153,7 +162,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	buttonConfirmUsername.addEventListener("click", () => {
 		if(validUsername(inputUsername.value)) {
-			socket.emit("register", inputUsername.value);
+			socket.emit("register", { 
+				username: inputUsername.value, 
+				key: localStorage.getItem("publicKey") 
+			});
 		} else {
 			Notify.error({
 				title: "Username Invalid",
@@ -370,23 +382,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	});
 
 	socket.on("login", username => {
-		if(empty(localStorage.getItem("privateKey")) || empty(localStorage.getItem("publicKey"))) {
-			CryptoFD.generateRSAKeys().then(keys => {
-				localStorage.setItem("privateKey", keys.privateKey);
-				localStorage.setItem("publicKey", keys.publicKey);
-
-				socket.emit("set-key", keys.publicKey);
-			}).catch(error => {
-				console.log(error);
-
-				Notify.error({
-					title: "RSA Keys",
-					description: "Couldn't generate public/private key pair."
-				});
-			});
-		} else {
-			socket.emit("set-key", localStorage.getItem("publicKey"));
-		}
+		socket.emit("set-key", localStorage.getItem("publicKey"));
 
 		login(username);
 	});
@@ -540,7 +536,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 				title: "Receiving File",
 				description: "You are receiving a file...",
 				color: "var(--accent-contrast)",
-				background: "var(--accent-first-transparent)",
+				background: "var(--accent-first-transparent-low)",
 				duration: 8000
 			});
 
@@ -767,7 +763,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 					manualDisconnect = false;
 					requiresReconnect = false;
 
-					socket.emit("register", localStorage.getItem("username"));
+					socket.emit("register", { 
+						username: localStorage.getItem("username"), 
+						key: localStorage.getItem("publicKey") 
+					});
+
 					socket.emit("get-clients");
 				}
 
