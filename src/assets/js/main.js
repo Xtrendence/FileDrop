@@ -247,8 +247,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	inputFile.addEventListener("change", async () => {
 		let publicKey = localStorage.getItem("publicKey");
+		let from = localStorage.getItem("ip");
+		let to = divUpload.getAttribute("data-client");
 
-		if(empty(inputFile.value) || inputFile.files.length === 0 || empty(publicKey)) {
+		if(empty(inputFile.value) || inputFile.files.length === 0 || empty(publicKey) || empty(from) || empty(to)) {
 			return;
 		}
 
@@ -264,7 +266,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 			return;
 		}
 
-		let reader = new ChunkReader(inputFile.files[0], 256 * 100, 0, 0);
+		let file = inputFile.files[0];
+
+		let uploader = new Uploader(socket, from, to, file, encryptionEnabled());
+
+		let reader = new ChunkReader(file, 256 * 100, 0, 0);
 		reader.createReader();
 
 		if(encryptionEnabled()) {
@@ -272,11 +278,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 		}
 
 		reader.on("chunkData", data => {
-			console.log(data);
+			uploader.upload(data);
 		});
 
 		reader.on("nextChunk", (percentage, currentChunk, offset) => {
-			console.log(percentage);
+
+		});
+
+		reader.on("done", (encryption, filename) => {
+			uploader.finish();
+
+			let notificationDescription = filename + " has been uploaded without encryption.";
+			if(encryption) {
+				notificationDescription = filename + " has been uploaded with encryption.";
+			}
+
+			Notify.success({ 
+				title: "File Uploaded", 
+				description: notificationDescription, 
+				duration: 4000,
+				color: "var(--accent-contrast)",
+				background: "var(--accent-second)"
+			});
 		});
 
 		reader.nextChunk();

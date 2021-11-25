@@ -72,8 +72,12 @@ module.exports = class ConnectionManager {
 	}
 
 	async getClients() {
-		let clients = await this.db.fetch("clients");
-		return clients.data;
+		try {
+			let clients = await this.db.fetch("clients");
+			return clients.data;
+		} catch(error) {
+			console.log(error);
+		}
 	}
 
 	clientExists(address) {

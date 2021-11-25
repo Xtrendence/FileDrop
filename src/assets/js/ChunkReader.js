@@ -23,8 +23,16 @@ class ChunkReader {
 				data = { chunkData:encrypted, key:this.encryptedKey, chunk:this.currentChunk, offset:this.offset };
 			}
 
-			if(this.hasEvent("chunkData")) {
-				this.events["chunkData"](data);
+			if(this.offset < this.file.size) {
+				if(this.hasEvent("chunkData")) {
+					this.events["chunkData"](data);
+				}
+
+				this.nextChunk();
+			} else {
+				if(this.hasEvent("done")) {
+					this.events["done"](this.encryption, this.file.name);
+				}
 			}
 		}
 
