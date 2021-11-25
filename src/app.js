@@ -19,7 +19,7 @@ app.get("/", (request, response) => {
 });
 
 app.get("/forge/prime.worker.js", (request, response) => {
-	response.sendFile(path.join(__dirname, "./src/assets/js/prime.worker.min.js"));
+	response.sendFile(path.join(__dirname, "./assets/js/prime.worker.min.js"));
 });
 
 module.exports = app;
