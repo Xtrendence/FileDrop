@@ -8,29 +8,33 @@ module.exports = class UploadManager {
 		this.permissionManager = permissionManager;
 	}
 
-	getWhitelist() {
+	getWhitelist(address) {
 		let allowed = [];
 		let whitelist = this.permissionManager.whitelist;
-		Object.keys(whitelist).map(client => {
-			if(whitelist[client]["allowed"] === true) {
-				allowed.push(client);
-			}
-		});
+		if(address in whitelist) {
+			Object.keys(whitelist[address]).map(client => {
+				if(whitelist[address][client]["allowed"] === true) {
+					allowed.push(client);
+				}
+			});
+		}
 		return allowed;
 	}
 
 	attach(socket) {
 		socket.on("uploaded", data => {
-			let whitelist = this.getWhitelist();
-			if(data.from in whitelist[data.to] && whitelist[data.to][data.from] === true) {
-				this.connectionManager.io.to(data.to).emit("uploaded", { from:data.from, encryption:data.encryption, filename:data.filename });
+			let whitelist = this.getWhitelist(data.to);
+			let clients = this.connectionManager.clients;
+			if(whitelist.includes(data.from)) {
+				this.connectionManager.io.to(clients[data.to].socket.id).emit("uploaded", { from:data.from, encryption:data.encryption, filename:data.filename });
 			}
 		});
 
 		socket.on("upload", async data => {
-			let whitelist = this.getWhitelist();
-			if(data.from in whitelist[data.to] && whitelist[data.to][data.from] === true) {
-				this.connectionManager.io.to(data.to).emit("upload", data);
+			let whitelist = this.getWhitelist(data.to);
+			let clients = this.connectionManager.clients;
+			if(whitelist.includes(data.from)) {
+				this.connectionManager.io.to(clients[data.to].socket.id).emit("upload", data);
 			}
 		});
 	}
