@@ -16,6 +16,9 @@ input, button {
 div, span, input, button, textarea {
 	transition:background 0.25s, color 0.25s;
 }
+a {
+	text-decoration:none;
+}
 .noselect {
 	-webkit-user-select:none;
 	-khtml-user-select:none;
@@ -187,7 +190,7 @@ input[type=number] {
 	right:-200px;
 	width:200px;
 	height:auto;
-	max-height:200px;
+	max-height:240px;
 	transition:right 0.25s ease-in-out;
 	overflow:hidden auto;
 	border-radius:var(--border-radius);
