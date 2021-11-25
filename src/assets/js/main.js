@@ -26,6 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let socket = io.connect(`http://${ip}:${port}`);
 
+	let divLogin = document.getElementById("login-wrapper");
+	let divApp = document.getElementById("app-wrapper");
+
 	let spanServer = document.getElementById("span-server");
 
 	let inputUsername = document.getElementById("input-username");
@@ -33,12 +36,18 @@ document.addEventListener("DOMContentLoaded", () => {
 	let buttonRandomUsername = document.getElementById("random-username-button");
 	let buttonConfirmUsername = document.getElementById("confirm-username-button");
 
+	let buttonLogout = document.getElementById("logout-button");
+
 	buttonRandomUsername.addEventListener("click", () => {
 		socket.emit("random-username");
 	});
 
 	buttonConfirmUsername.addEventListener("click", () => {
 		socket.emit("register", inputUsername.value);
+	});
+
+	buttonLogout.addEventListener("click", () => {
+		socket.emit("logout");
 	});
 
 	socket.on("connect", () => {
@@ -55,6 +64,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	socket.on("reconnect", () => {
 		setStatus("Connected");
+	});
+
+	socket.on("logout", () => {
+		logout();
 	});
 
 	socket.on("notify", notification => {
@@ -77,6 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	socket.on("set-color", colors => {
+		login();
+
 		let gradientStopKeys = Object.keys(gradientStops);
 	
 		for(let i = 0; i < gradientStopKeys.length; i++) {
@@ -85,6 +100,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		svgBackground.style.background = colors[2];
 	});
+
+	function login() {
+		divApp.classList.remove("hidden");
+
+		divLogin.style.opacity = 0;
+
+		setTimeout(() => {
+			divLogin.removeAttribute("style");
+			divLogin.classList.add("hidden");
+		}, 250);
+	}
+
+	function logout() {
+		divApp.style.opacity = 0;
+
+		divLogin.style.zIndex = 1;
+		divLogin.classList.remove("hidden");
+
+		setTimeout(() => {
+			divApp.removeAttribute("style");
+			divApp.classList.add("hidden");
+
+			divLogin.removeAttribute("style");
+		}, 250);
+	}
 
 	function setStatus(status) {
 		spanServer.textContent = `${ip}:${port} | ${status}`;

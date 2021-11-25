@@ -33,6 +33,11 @@ io.on("connection", socket => {
 			socket.emit("username-taken");
 		}
 	});
+
+	socket.on("logout", () => {
+		socket.emit("logout");
+		connectionManager.removeClient(socket.handshake.address);
+	});
 });
 
 console.log("\x1b[35m", "Started Server: ", "\x1b[4m", "http://" + ip + ":" + server.address().port, "\x1b[0m");
