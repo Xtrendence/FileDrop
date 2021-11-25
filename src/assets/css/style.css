@@ -273,7 +273,7 @@ input[type=number] {
 	right:-200px;
 	width:200px;
 	height:auto;
-	max-height:240px;
+	max-height:300px;
 	transition:right 0.25s ease-in-out;
 	overflow:hidden auto;
 	border-radius:var(--border-radius);

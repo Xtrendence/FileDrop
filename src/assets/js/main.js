@@ -1,6 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-	let autoLogin = true;
-
 	let svgBackground = document.getElementById("background");
 
 	window.addEventListener("resize", setBackgroundSize);
@@ -41,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let buttonClearStorage = document.getElementById("clear-storage-button");
 	let toggleTheme = document.getElementById("theme-toggle");
 	let toggleEncryption = document.getElementById("encryption-toggle");
+	let toggleAutoLogin = document.getElementById("auto-login-toggle");
 
 	let buttonServer = document.getElementById("server-button");
 
@@ -50,6 +49,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	let buttonConfirmUsername = document.getElementById("confirm-username-button");
 
 	let buttonLogout = document.getElementById("logout-button");
+
+	savedAutoLogin = localStorage.getItem("autoLogin");
+	let autoLogin = empty(savedAutoLogin) ? "true" : savedAutoLogin;
+	if(autoLogin === "false") {
+		toggleAutoLogin.classList.remove("active");
+	}
 
 	let savedUsername = localStorage.getItem("username");
 	if(!empty(savedUsername)) {
@@ -140,12 +145,22 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	});
 
+	toggleAutoLogin.addEventListener("click", () => {
+		if(toggleAutoLogin.classList.contains("active")) {
+			toggleAutoLogin.classList.remove("active");
+			localStorage.setItem("autoLogin", "false");
+		} else {
+			toggleAutoLogin.classList.add("active");
+			localStorage.setItem("autoLogin", "true");
+		}
+	});
+
 	buttonLogout.addEventListener("click", () => {
 		socket.emit("logout");
 	});
 
 	socket.on("connect", () => {
-		if(autoLogin && !empty(savedUsername) && !divLogin.classList.contains("hidden") && !empty(inputUsername.value)) {
+		if(autoLogin === "true" && !empty(savedUsername) && !divLogin.classList.contains("hidden") && !empty(inputUsername.value)) {
 			setTimeout(() => buttonConfirmUsername.click(), 625);
 		} else {
 			setTimeout(() => divLoading.classList.add("hidden"), 750);
