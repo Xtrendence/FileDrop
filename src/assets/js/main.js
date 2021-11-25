@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	let manualDisconnect = false;
 	let requiresReconnect = false;
 
+	let whitelist = {};
+
 	let svgBackground = document.getElementById("background");
 
 	window.addEventListener("resize", setBackgroundSize);
@@ -137,7 +139,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	buttonConfirmUsername.addEventListener("click", () => {
-		socket.emit("register", inputUsername.value);
+		if(validUsername(inputUsername.value)) {
+			socket.emit("register", inputUsername.value);
+		} else {
+			Notify.error({
+				title: "Username Invalid",
+				description: "Please only use letters and numbers (16 max)."
+			});
+		}
 	});
 
 	buttonSettings.addEventListener("click", () => {
@@ -294,7 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		Notify.error({
 			title: "Username Invalid",
-			description: "Please only use letters and numbers."
+			description: "Please only use letters and numbers (16 max)."
 		});
 	});
 
@@ -320,7 +329,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			let div = document.createElement("div");
 			div.id = ip;
-			div.innerHTML = `<div class="client"><span class="username">${client.username}</span></div>`;
+			div.classList.add("client");
+			div.classList.add("noselect");
+			div.innerHTML = `<span class="username">${client.username}</span>`;
+			
+			let button = document.createElement("button");
+			button.classList.add("client-action");
+
+			if(Object.keys(whitelist).includes(ip)) {
+				button.textContent = "Send File";
+
+				button.addEventListener("click", () => {
+
+				});
+			} else {
+				button.textContent = "Ask Permission";
+
+				button.addEventListener("click", () => {
+
+				});
+			}
+
+			div.appendChild(button);
 
 			divClients.appendChild(div);
 		});
@@ -451,6 +481,19 @@ document.addEventListener("DOMContentLoaded", () => {
 		}, 250);
 	}
 
+	function validUsername(username) {
+		try {
+			if(username.length > 16) {
+				return false;
+			}
+			
+			return (/^[A-Za-z0-9]+$/.test(username));
+		} catch(error) {
+			console.log(error);
+			return false;
+		}
+	}
+
 	function setStatus(status) {
 		let html = `<span>${ip}:${port}</span><span class="separator"> ‹ </span><span class="status">${status}</span>`;
 		if(!divApp.classList.contains("hidden") && !empty(localStorage.getItem("username"))) {
@@ -473,10 +516,14 @@ document.addEventListener("DOMContentLoaded", () => {
 				buttonServer.classList.remove("processing");
 				break;
 			case "Reconnecting":
+				divClients.innerHTML = "";
+				
 				buttonServer.classList.remove("active");
 				buttonServer.classList.add("processing");
 				break;
 			case "Disconnected":
+				divClients.innerHTML = "";
+
 				buttonServer.classList.remove("active");
 				buttonServer.classList.remove("processing");
 				break;

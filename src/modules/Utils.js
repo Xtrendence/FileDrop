@@ -22,7 +22,16 @@ module.exports = {
 	},
 
 	validUsername(username) {
-		return (/^[A-Za-z0-9]+$/.test(username)) ;
+		try {
+			if(username.length > 16) {
+				return false;
+			}
+			
+			return (/^[A-Za-z0-9]+$/.test(username));
+		} catch(error) {
+			console.log(error);
+			return false;
+		}
 	},
 
 	xssValid(string) {

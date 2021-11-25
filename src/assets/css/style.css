@@ -286,6 +286,9 @@ input[type=number] {
 	right:20px;
 	bottom:auto;
 	top:20px;
+	width:auto;
+	max-height:300px;
+	max-width:calc(100% - 40px);
 }
 .settings-wrapper .section, .clients-wrapper .client {
 	display:block;
@@ -295,6 +298,22 @@ input[type=number] {
 	border-radius:var(--border-radius);
 	padding:10px;
 }
+.clients-wrapper .client .client-action {
+	cursor:pointer;
+	vertical-align:top;
+	height:36px;
+	padding:0 10px 0 10px;
+	border-radius:var(--border-radius);
+	font-weight:bold;
+	float:right;
+	background:var(--main-fourth);
+	color:var(--main-contrast-light);
+	box-shadow:var(--shadow-smooth);
+}
+#desktop .clients-wrapper .client .client-action:hover {
+	background:var(--accent-first);
+	color:var(--accent-contrast);
+}
 .settings-wrapper .section .title, .clients-wrapper .client span {
 	display:inline-block;
 	font-size:16px;
@@ -302,6 +321,10 @@ input[type=number] {
 	color:var(--main-contrast-light);
 	vertical-align:top;
 	line-height:25px;
+}
+.clients-wrapper .client span {
+	line-height:34px;
+	margin-right:20px;
 }
 .settings-wrapper .section .toggle-wrapper {
 	float:right;

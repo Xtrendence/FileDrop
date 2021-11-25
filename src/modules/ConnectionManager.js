@@ -10,9 +10,11 @@ module.exports = class ConnectionManager {
 		this.clientLimit = clientLimit;
 		this.clients = {};
 
-		this.ping = setInterval(() => {
-			this.io.to("network").emit("ping");
-		}, pingInterval);
+		if(pingInterval !== false) {
+			this.ping = setInterval(() => {
+				this.io.to("network").emit("ping");
+			}, pingInterval);
+		}
 	}
 
 	attach(socket) {
