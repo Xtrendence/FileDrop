@@ -29,6 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let socket = io.connect(`http://${ip}:${port}`);
 
+	let divLoading = document.getElementById("loading-overlay");
+
 	let divLogin = document.getElementById("login-wrapper");
 	let divApp = document.getElementById("app-wrapper");
 
@@ -109,14 +111,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		logout();
 		localStorage.clear();
 
+		showLoading(5000);
+
 		Notify.alert({
 			title: "Storage Cleared",
-			description: "Refreshing..."
+			description: "Refreshing...",
+			duration: 2000
 		});
 
 		setTimeout(() => {
 			window.location.reload();
-		}, 500);
+		}, 2500);
 	});
 
 	toggleTheme.addEventListener("click", () => {
@@ -142,6 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	socket.on("connect", () => {
 		if(autoLogin && !empty(savedUsername) && !divLogin.classList.contains("hidden") && !empty(inputUsername.value)) {
 			setTimeout(() => buttonConfirmUsername.click(), 625);
+		} else {
+			setTimeout(() => divLoading.classList.add("hidden"), 750);
 		}
 
 		setStatus("Connected");
@@ -202,6 +209,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	socket.on("username-invalid", () => {
+		divLoading.classList.add("hidden");
+
 		Notify.error({
 			title: "Username Invalid",
 			description: "Please only use letters and numbers."
@@ -209,6 +218,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	socket.on("username-taken", () => {
+		divLoading.classList.add("hidden");
+
 		Notify.error({
 			title: "Username Taken",
 			description: "That username isn't available."
@@ -262,6 +273,25 @@ document.addEventListener("DOMContentLoaded", () => {
 		}, 350);
 	}
 
+	function showLoading(limit, text = "") {
+		hideLoading();
+
+		let element = document.createElement("div");
+		element.classList.add("loading-screen");
+		element.innerHTML = '<div class="loading-icon"><div></div><div></div></div><span id="loading-text">' + text + '</span>';
+		document.body.appendChild(element);
+
+		setTimeout(() => {
+			element.remove();
+		}, limit);
+	}
+
+	function hideLoading() {
+		for(let i = 0; i < document.getElementsByClassName("loading-screen").length; i++) {
+			document.getElementsByClassName("loading-screen")[i].remove();
+		}
+	}
+
 	function login(username) {
 		buttonServer.style.left = "120px";
 
@@ -276,6 +306,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		setTimeout(() => {
 			divLogin.removeAttribute("style");
 			divLogin.classList.add("hidden");
+			
+			divLoading.classList.add("hidden");
 			
 			inputUsername.value = "";
 		}, 250);
