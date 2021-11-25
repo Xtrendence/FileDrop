@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+	let manualDisconnect = false;
+	let requiresReconnect = false;
+
 	let svgBackground = document.getElementById("background");
 
 	window.addEventListener("resize", setBackgroundSize);
@@ -49,6 +52,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let buttonRandomUsername = document.getElementById("random-username-button");
 	let buttonConfirmUsername = document.getElementById("confirm-username-button");
+
+	let divClients = document.getElementById("clients-wrapper");
 
 	let buttonLogout = document.getElementById("logout-button");
 
@@ -112,13 +117,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	buttonServer.addEventListener("click", () => {
 		if(buttonServer.classList.contains("active") || buttonServer.classList.contains("processing")) {
+			manualDisconnect = true;
 			socket.disconnect();
 		} else {
+			manualDisconnect = true;
+			requiresReconnect = false;
 			socket.connect();
-
-			if(divLogin.classList.contains("hidden") && !empty(localStorage.getItem("username"))) {
-				socket.emit("register", localStorage.getItem("username"));
-			}
 		}
 	});
 
@@ -213,6 +217,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	socket.on("disconnect", () => {
+		if(!manualDisconnect) {
+			requiresReconnect = true;
+		}
+
 		setStatus("Disconnected");
 	});
 
@@ -300,7 +308,22 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	socket.on("client-list", clients => {
-		console.log(clients);
+		console.log(JSON.stringify(clients), null, 2);
+
+		delete clients[localStorage.getItem("ip")];
+
+		divClients.innerHTML = "";
+
+		let ips = Object.keys(clients);
+		ips.map(ip => {
+			let client = clients[ip];
+
+			let div = document.createElement("div");
+			div.id = ip;
+			div.innerHTML = `<div class="client"><span class="username">${client.username}</span></div>`;
+
+			divClients.appendChild(div);
+		});
 	});
 
 	socket.on("set-color", colors => {
@@ -438,6 +461,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		switch(status) {
 			case "Connected":
+				if(divLogin.classList.contains("hidden") && (!empty(localStorage.getItem("username")) && !manualDisconnect && requiresReconnect) || manualDisconnect) {
+					manualDisconnect = false;
+					requiresReconnect = false;
+
+					socket.emit("register", localStorage.getItem("username"));
+					socket.emit("get-clients");
+				}
+
 				buttonServer.classList.add("active");
 				buttonServer.classList.remove("processing");
 				break;

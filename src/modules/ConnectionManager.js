@@ -26,6 +26,11 @@ module.exports = class ConnectionManager {
 			await this.removeClient(address);
 		});
 
+		socket.on("get-clients", async () => {
+			let clients = await this.getClients();
+			socket.emit("client-list", clients);
+		});
+
 		socket.on("set-key", async key => {
 			if(utils.xssValid(key)) {
 				this.clients[address]["key"] = key;

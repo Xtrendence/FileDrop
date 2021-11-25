@@ -1,6 +1,6 @@
 @media screen and (max-width:800px) {
 	.server-button {
-		height:90px;
+		height:120px;
 		padding:0 20px 0 20px;
 	}
 	.server-button.logged-in {
@@ -10,7 +10,7 @@
 		display:block;
 		line-height:34px;
 	}
-	.server-button .separator {
+	.server-button .separator, .server-button .separator-required {
 		display:none;
 	}
 	.logout-button {
@@ -26,9 +26,9 @@
 		width:calc(100% - 40px);
 	}
 	.settings-button {
-		bottom:130px;
+		bottom:150px;
 	}
 	.settings-wrapper {
-		bottom:130px;
+		bottom:150px;
 	}
 }
