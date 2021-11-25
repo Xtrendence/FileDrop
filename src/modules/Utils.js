@@ -25,6 +25,13 @@ module.exports = {
 		return (/^[A-Za-z0-9]+$/.test(username)) ;
 	},
 
+	xssValid(string) {
+		if(string.includes("<") || string.includes(">")) {
+			return false;
+		}
+		return true;
+	},
+
 	getUsername(clients) {
 		let words = require("./Words");
 		let available = Object.keys(words);

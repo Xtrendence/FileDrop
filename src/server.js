@@ -21,30 +21,44 @@ const dbManager = new DBManager("db");
 const connectionManager = new ConnectionManager(io, dbManager, 64, 5000);
 
 io.on("connection", socket => {
-	socket.emit("set-ip", socket.handshake.address);
-	
-	socket.on("random-username", () => {
-		socket.emit("random-username", utils.getUsername(connectionManager.clients));
-	});
+	let address = socket.handshake.address;
 
-	socket.on("register", username => {
-		if(!utils.validUsername(username)) {
-			socket.emit("username-invalid");
-			return;
-		}
+	if(utils.xssValid(address)) {
+		socket.emit("set-ip", socket.handshake.address);
+		
+		socket.on("random-username", () => {
+			socket.emit("random-username", utils.getUsername(connectionManager.clients));
+		});
 
-		if(connectionManager.usernameTaken(username)) {
-			socket.emit("username-taken");
-			return;
-		}
+		socket.on("register", username => {
+			if(!utils.validUsername(username)) {
+				socket.emit("username-invalid");
+				return;
+			}
 
-		connectionManager.addClient(socket, username);
-	});
+			if(connectionManager.usernameTaken(username)) {
+				socket.emit("username-taken");
+				return;
+			}
 
-	socket.on("logout", () => {
-		socket.emit("logout");
-		connectionManager.removeClient(socket.handshake.address);
-	});
+			connectionManager.addClient(socket, username);
+		});
+
+		socket.on("logout", () => {
+			socket.emit("logout");
+			connectionManager.removeClient(socket.handshake.address);
+		});
+	} else {
+		socket.emit("notify", { 
+			title: "Invalid IP", 
+			description: "The provided IP contains invalid characters.", 
+			duration: 4000, 
+			background: "rgb(230,20,20)",
+			color: "rgb(255,255,255)"
+		});
+
+		socket.emit("kick");
+	}
 });
 
 console.log("\x1b[35m", "Started Server: ", "\x1b[4m", "http://" + ip + ":" + server.address().port, "\x1b[0m");

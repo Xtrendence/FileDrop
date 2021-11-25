@@ -27,10 +27,24 @@ module.exports = class ConnectionManager {
 		});
 
 		socket.on("set-key", async key => {
-			this.clients[address]["key"] = key;
-				
-			await this.saveClients();
-			await this.broadcastList();
+			if(utils.xssValid(key)) {
+				this.clients[address]["key"] = key;
+
+				await this.saveClients();
+				await this.broadcastList();
+			} else {
+				socket.emit("notify", { 
+					title: "Invalid Key", 
+					description: "The provided key contains invalid characters.", 
+					duration: 4000, 
+					background: "rgb(230,20,20)",
+					color: "rgb(255,255,255)"
+				});
+
+				socket.emit("kick");
+
+				this.removeClient(address);
+			}
 		});
 	}
 

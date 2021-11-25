@@ -115,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	buttonClearStorage.addEventListener("click", () => {
 		logout();
+		
 		localStorage.clear();
 
 		showLoading(5000);
@@ -125,9 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			duration: 2000
 		});
 
-		setTimeout(() => {
-			window.location.reload();
-		}, 2500);
+		setTimeout(() => window.location.reload(), 2500);
 	});
 
 	buttonSettingsLogout.addEventListener("click", () => {
@@ -210,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				});
 			});
 		} else {
-			socket.emit("set-key", localStorage.getItem("publicKey"));
+			socket.emit("set-key", ">" + localStorage.getItem("publicKey"));
 		}
 
 		login(username);
@@ -218,6 +217,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	socket.on("logout", () => {
 		logout();
+	});
+
+	socket.on("kick", () => {
+		showLoading(6000, "Refreshing...");
+
+		localStorage.removeItem("key");
+		localStorage.removeItem("username");
+
+		Notify.error({
+			title: "Kicked By Server",
+			description: "The server has kicked you to protect itself.",
+			duration: 4000
+		});
+
+		setTimeout(() => window.location.reload(), 5000);
 	});
 
 	socket.on("notify", notification => {
