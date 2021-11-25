@@ -231,7 +231,7 @@ input[type=number] {
 	color:var(--accent-contrast);
 }
 
-.app-wrapper svg {
+.app-wrapper #background {
 	position:fixed;
 	z-index:1;
 	top:0;
@@ -313,6 +313,30 @@ input[type=number] {
 #desktop .clients-wrapper .client .client-action:hover {
 	background:var(--accent-first);
 	color:var(--accent-contrast);
+}
+.clients-wrapper .client .client-info {
+	cursor:pointer;
+	vertical-align:top;
+	height:36px;
+	width:36px;
+	padding:0;
+	margin-left:10px;
+	border-radius:var(--border-radius);
+	font-weight:bold;
+	float:right;
+	background:var(--main-fourth);
+	color:var(--main-contrast-light);
+	box-shadow:var(--shadow-smooth);
+}
+#desktop .clients-wrapper .client .client-info:hover {
+	background:var(--accent-first);
+	color:var(--accent-contrast);
+}
+.clients-wrapper .client .client-info svg {
+	margin-top:2px;
+	width:28px;
+	height:28px;
+	fill:var(--main-contrast);
 }
 .settings-wrapper .section .title, .clients-wrapper .client span {
 	display:inline-block;
@@ -587,11 +611,11 @@ input[type=number] {
 	border-radius:var(--border-radius);
 	display:inline-block;
 	cursor:pointer;
-	opacity:0.8;
+	opacity:1;
 	transition:opacity 0.25s;
 }
 #desktop .x-notification button:hover {
-	opacity:1;
+	opacity:0.8;
 }
 .x-notification .buttons {
 	text-align:right;

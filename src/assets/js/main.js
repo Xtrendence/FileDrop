@@ -471,6 +471,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 				let button = document.createElement("button");
 				button.classList.add("client-action");
 
+				let info = document.createElement("button");
+				info.classList.add("client-info");
+				info.innerHTML = `<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1216 1344v128q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h64v-384h-64q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h384q26 0 45 19t19 45v576h64q26 0 45 19t19 45zm-128-1152v192q0 26-19 45t-45 19h-256q-26 0-45-19t-19-45v-192q0-26 19-45t45-19h256q26 0 45 19t19 45z"/></svg>`;
+
 				if(clientList[ip]["allowed"] === true) {
 					button.textContent = "Send File";
 
@@ -493,6 +497,39 @@ document.addEventListener("DOMContentLoaded", async () => {
 					});
 				}
 
+				let whitelisted = (clientList[ip]["allowed"] === true) ? "Yes" : "No";
+
+				info.addEventListener("click", () => {
+					Notify.info({
+						title: "Client Info", 
+						description: `IP: ${ip}<br>Username: ${client.username}<br>Whitelisted: ${whitelisted}`, 
+						duration: 10000,
+						color: "var(--main-contrast)",
+						background: "var(--main-third-transparent)",
+						html: `<div class="buttons"><button id="${ip}-block" class="decline">Block</button><button id="${ip}-whitelist" class="accept">Whitelist</button></div>`
+					});
+
+					let buttonBlock = document.getElementById(ip + "-block");
+					let buttonWhitelist = document.getElementById(ip + "-whitelist");
+
+					buttonBlock.addEventListener("click", () => {
+						Notify.hideNotification(buttonBlock.parentElement.parentElement.parentElement);
+
+						whitelist[ip] = { allowed:false };
+
+						socket.emit("update-permission", { whitelist:whitelist, response:false, to:ip });
+					});
+
+					buttonWhitelist.addEventListener("click", () => {
+						Notify.hideNotification(buttonWhitelist.parentElement.parentElement.parentElement);
+
+						whitelist[ip] = { allowed:true };
+
+						socket.emit("update-permission", { whitelist:whitelist, response:true, to:ip });
+					});
+				});
+
+				div.appendChild(info);
 				div.appendChild(button);
 
 				divClients.appendChild(div);
