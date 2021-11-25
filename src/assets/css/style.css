@@ -393,8 +393,9 @@ input[type=number] {
 	width:auto;
 	top:auto;
 	bottom:20px;
-	background:rgba(0,0,0,0.5);
-	color:rgb(255,255,255);
+	background:var(--main-first-transparent);
+	color:var(--main-contrast-light);
+	transition:background 0.25s;
 }
 .server-button.logged-in {
 	left:120px;
@@ -406,4 +407,10 @@ input[type=number] {
 .server-button.processing {
 	color:var(--accent-contrast);
 	background:var(--accent-first);
+}
+.server-button .separator, .server-button .separator-required {
+	padding:0 10px 0 10px;
+	margin-top:-1px;
+	display:inline-block;
+	vertical-align:top;
 }
