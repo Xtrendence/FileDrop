@@ -27,10 +27,10 @@ module.exports = class UploadManager {
 			}
 		});
 
-		socket.on("upload", async uploadData => {
+		socket.on("upload", async data => {
 			let whitelist = this.getWhitelist();
-			if(uploadData.from in whitelist[uploadData.to] && whitelist[uploadData.to][uploadData.from] === true) {
-				this.connectionManager.io.to(uploadData.to).emit("upload", uploadData);
+			if(data.from in whitelist[data.to] && whitelist[data.to][data.from] === true) {
+				this.connectionManager.io.to(data.to).emit("upload", data);
 			}
 		});
 	}

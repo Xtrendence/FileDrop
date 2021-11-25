@@ -19,6 +19,10 @@
 	#settings-logout-button {
 		display:block;
 	}
+	.upload-wrapper .title {
+		width:calc(100% - 100px);
+		left:40px;
+	}
 }
 
 @media screen and (max-width:420px) {

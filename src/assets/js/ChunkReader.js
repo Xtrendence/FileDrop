@@ -11,7 +11,7 @@ class ChunkReader {
 	createReader() {
 		this.reader = new FileReader();
 
-		this.reader.onload = async function(event) {
+		this.reader.onload = async (event) => {
 			let content = event.target.result;
 
 			let data = { chunkData:content, chunk:this.currentChunk, offset:this.offset };
@@ -28,7 +28,7 @@ class ChunkReader {
 			}
 		}
 
-		this.reader.onerror = function(error) {
+		this.reader.onerror = (error) => {
 			if(this.hasEvent("error")) {
 				this.events["error"](error);
 			}

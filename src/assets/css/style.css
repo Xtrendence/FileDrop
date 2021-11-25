@@ -403,18 +403,18 @@ input[type=number] {
 	height:100%;
 	overflow:hidden;
 	position:absolute;
-	background:var(--main-first-transparent);
+	background:rgba(20,20,20,0.6);
 	backdrop-filter:blur(5px);
 }
 .upload-wrapper .title {
 	position:absolute;
 	z-index:14;
 	top:20px;
-	left:calc(50% - 400px / 2);
+	left:calc(50% - 600px / 2);
 	display:block;
 	text-align:center;
 	line-height:30px;
-	width:400px;
+	width:600px;
 	font-size:20px;
 	padding:5px 10px 5px 10px;
 	border-radius:var(--border-radius);

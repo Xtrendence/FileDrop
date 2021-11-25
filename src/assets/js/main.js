@@ -1,6 +1,8 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 	let manualDisconnect = false;
 	let requiresReconnect = false;
+
+	let saver = new FileSaver();
 
 	let clientList = {};
 	let whitelist = {};
@@ -243,8 +245,41 @@ document.addEventListener("DOMContentLoaded", () => {
 		event.preventDefault();
 	};
 
-	inputFile.addEventListener("change", (event) => {
-		console.log(inputFile.files);
+	inputFile.addEventListener("change", async () => {
+		let publicKey = localStorage.getItem("publicKey");
+
+		if(empty(inputFile.value) || inputFile.files.length === 0 || empty(publicKey)) {
+			return;
+		}
+
+		if(!serverConnected()) {
+			Notify.error({ 
+				title: "Not Connected", 
+				description: "You aren't connected to the server.", 
+				duration: 4000
+			});
+
+			hideUpload();
+			
+			return;
+		}
+
+		let reader = new ChunkReader(inputFile.files[0], 256 * 100, 0, 0);
+		reader.createReader();
+
+		if(encryptionEnabled()) {
+			await reader.encryptChunks(publicKey);
+		}
+
+		reader.on("chunkData", data => {
+			console.log(data);
+		});
+
+		reader.on("nextChunk", (percentage, currentChunk, offset) => {
+			console.log(percentage);
+		});
+
+		reader.nextChunk();
 	});
 
 	buttonUpload.addEventListener("click", () => {
@@ -382,7 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				button.textContent = "Send File";
 
 				button.addEventListener("click", () => {
-					showUpload(ip, username);
+					showUpload(ip, client.username);
 				});
 			} else {
 				button.textContent = "Ask Permission";
@@ -437,6 +472,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				socket.emit("update-permission", { whitelist:whitelist, response:true, to:from });
 			});
+		} else {
+			if(from in whitelist && whitelist[from]["allowed"] === true) {
+				socket.emit("update-permission", { whitelist:whitelist, response:true, to:from });
+			}
 		}
 	});
 
@@ -473,6 +512,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		svgBackground.style.background = colors[2];
 	});
+
+	function serverConnected() {
+		return buttonServer.classList.contains("active");
+	}
+
+	function encryptionEnabled() {
+		return toggleEncryption.classList.contains("active");
+	}
 
 	function setTheme(theme) {
 		switch(theme) {
@@ -547,9 +594,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	function resetUpload() {
+		inputFile.value = null;
+		inputFile.type = "text";
+		inputFile.type = "file";
+
 		divUpload.removeAttribute("data-client");
 
-		spanUpload.textContent = `Sending File › User`;
+		spanUpload.textContent = `Sending File › User (127.0.0.1)`;
 	}
 
 	function showUpload(ip, username) {

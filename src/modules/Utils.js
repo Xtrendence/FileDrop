@@ -21,6 +21,10 @@ module.exports = {
 		return ip;
 	},
 
+	IPv4(ip) {
+		return ip.replace("::ffff:", "");
+	},
+
 	validUsername(username) {
 		try {
 			if(username.length > 16) {

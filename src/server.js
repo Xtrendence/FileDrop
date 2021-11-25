@@ -21,6 +21,8 @@ const dbManager = new DBManager("db");
 const connectionManager = new ConnectionManager(io, dbManager, 64, 5000);
 
 io.on("connection", socket => {
+	socket.handshake.address = utils.IPv4(socket.handshake.address);
+
 	let address = socket.handshake.address;
 
 	if(utils.xssValid(address)) {
