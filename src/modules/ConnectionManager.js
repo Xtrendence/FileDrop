@@ -15,6 +15,25 @@ module.exports = class ConnectionManager {
 		}, pingInterval);
 	}
 
+	attach(socket) {
+		let address = socket.handshake.address;
+
+		socket.on("disconnect", async () => {
+			socket.leave("network");
+
+			permissionManager.off("change");
+
+			await this.removeClient(address);
+		});
+
+		socket.on("set-key", async key => {
+			this.clients[address]["key"] = key;
+				
+			await this.saveClients();
+			await this.broadcastList();
+		});
+	}
+
 	async broadcastList(changed = false) {
 		let clients = await this.getClients();
 		this.io.to("network").emit("client-list", clients);
@@ -91,23 +110,9 @@ module.exports = class ConnectionManager {
 
 			this.clients[address] = { socket:socket, username:username, key:null, uploadManager:uploadManager, permissionManager:permissionManager, color:color.index };
 
-			socket.on("disconnect", async () => {
-				socket.leave("network");
-
-				permissionManager.off("change");
-
-				await this.removeClient(address);
-			});
-
-			socket.on("set-key", async key => {
-				this.clients[address]["key"] = key;
-				
-				await this.saveClients();
-				await this.broadcastList();
-			});
+			this.attach(socket);
 
 			socket.emit("set-color", color.colors);
-
 			socket.emit("login", username);
 
 			await this.saveClients();
