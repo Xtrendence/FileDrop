@@ -17,23 +17,60 @@ module.exports = class PermissionManager {
 		delete this.events[event];
 	}
 
-	whitelistContains(client) {
-		return Object.keys(this.whitelist).includes(client);
+	remove(address) {
+		delete this.whitelist[address];
+	}
+
+	whitelistContains(address, client) {		
+		if(!(address in this.whitelist)) {
+			return false;
+		}
+
+		if(!Object.keys(this.whitelist[address]).includes(client)) {
+			return false;
+		}
+
+		return !(this.whitelist[address][client]["allowed"] === true);
 	}
 
 	attach(socket) {
+		let address = socket.handshake.address;
+
 		socket.on("ask-permission", data => {
-			if(!this.whitelistContains(data.from)) {
-				this.connectionManager.io.to(data.to).emit("ask-permission", data.from);
+			if(!this.whitelistContains(data.to, data.from)) {
+				let clients = this.connectionManager.clients;
+
+				if(data.to in clients) {
+					try {
+						if(this.whitelist[data.to][data.from]["allowed"] === true) {
+							socket.emit("update-permission", { from:data.to, response:true });
+						} else {
+							this.connectionManager.io.to(clients[data.to].socket.id).emit("ask-permission", data.from);
+						}
+					} catch(error) {
+						this.connectionManager.io.to(clients[data.to].socket.id).emit("ask-permission", data.from);
+					}
+				}
+			} else {
+				socket.emit("update-permission", { from:data.to, response:false });
+
+				socket.emit("notify", { 
+					title: "Requests Blocked", 
+					description: "This client has blocked your requests.", 
+					duration: 4000, 
+					background: "rgb(230,20,20)",
+					color: "rgb(255,255,255)"
+				});
 			}
 		});
 
 		socket.on("update-permission", data => {
-			let address = socket.handshake.address;
-
-			this.whitelist = data.whitelist;
+			this.whitelist[address] = data.whitelist;
 			
-			this.connectionManager.io.to(data.to).emit("update-permission", { from:address, whitelist:this.whitelist });
+			let clients = this.connectionManager.clients;
+			if(data.to in clients) {
+				this.connectionManager.io.to(clients[data.to].socket.id).emit("update-permission", { from:address, response:data.response });
+			}
 
 			if(this.hasEvent("change")) {
 				this.events["change"](this);

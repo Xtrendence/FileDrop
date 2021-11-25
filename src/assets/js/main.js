@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let manualDisconnect = false;
 	let requiresReconnect = false;
 
+	let clientList = {};
 	let whitelist = {};
 
 	let svgBackground = document.getElementById("background");
@@ -317,9 +318,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	socket.on("client-list", clients => {
-		console.log(JSON.stringify(clients), null, 2);
-
 		delete clients[localStorage.getItem("ip")];
+
+		Object.keys(clientList).map(existing => {
+			if(existing in clients) {
+				clients[existing]["allowed"] = clientList[existing]["allowed"];
+			}
+		});
+
+		clientList = clients;
 
 		divClients.innerHTML = "";
 
@@ -336,17 +343,25 @@ document.addEventListener("DOMContentLoaded", () => {
 			let button = document.createElement("button");
 			button.classList.add("client-action");
 
-			if(Object.keys(whitelist).includes(ip)) {
+			if(clientList[ip]["allowed"] === true) {
 				button.textContent = "Send File";
 
 				button.addEventListener("click", () => {
-
+					
 				});
 			} else {
 				button.textContent = "Ask Permission";
 
 				button.addEventListener("click", () => {
+					Notify.alert({ 
+						title: "Awaiting Response", 
+						description: "The other client needs to accept your upload request first.", 
+						duration: 6000,
+						color: "var(--main-contrast)",
+						background: "var(--main-third-transparent)"
+					});
 
+					socket.emit("ask-permission", { from:localStorage.getItem("ip"), to:ip });
 				});
 			}
 
@@ -354,6 +369,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			divClients.appendChild(div);
 		});
+	});
+
+	socket.on("ask-permission", from => {
+		if(!(from in whitelist) && from in clientList) {
+			let username = clientList[from].username;
+
+			Notify.alert({
+				title: "File Request", 
+				description: `${username} (${from}) would like to send you a file.`, 
+				duration: 30000,
+				color: "var(--main-contrast-light)",
+				background: "var(--main-third-transparent)",
+				html: `<div class="buttons"><button id="${from}-decline" class="decline">Decline</button><button id="${from}-accept" class="accept">Accept</button></div>`
+			});
+
+			let buttonDecline = document.getElementById(from + "-decline");
+			let buttonAccept = document.getElementById(from + "-accept");
+
+			buttonDecline.addEventListener("click", () => {
+				Notify.hideNotification(buttonDecline.parentElement.parentElement.parentElement);
+
+				whitelist[from] = { allowed:false };
+
+				socket.emit("update-permission", { whitelist:whitelist, response:false, to:from });
+			});
+
+			buttonAccept.addEventListener("click", () => {
+				Notify.hideNotification(buttonAccept.parentElement.parentElement.parentElement);
+
+				whitelist[from] = { allowed:true };
+
+				socket.emit("update-permission", { whitelist:whitelist, response:true, to:from });
+			});
+		}
+	});
+
+	socket.on("update-permission", data => {
+		if(data.from in clientList) {
+			clientList[data.from]["allowed"] = data.response;
+		}
+
+		if(data.response === true) {
+			Notify.success({
+				title: "Request Accepted", 
+				description: "You can now send files to " + clientList[data.from]["username"], 
+				duration: 4000,
+				background: "var(--accent-first)",
+				color: "var(--accent-contrast)"
+			});
+		} else {
+			Notify.error({
+				title: "Request Denied", 
+				description: "You cannot send files to " + clientList[data.from]["username"], 
+				duration: 4000,
+			});
+		}
+		
+		socket.emit("get-clients");
 	});
 
 	socket.on("set-color", colors => {
@@ -504,7 +577,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		switch(status) {
 			case "Connected":
-				if(divLogin.classList.contains("hidden") && (!empty(localStorage.getItem("username")) && !manualDisconnect && requiresReconnect) || manualDisconnect) {
+				if(divLogin.classList.contains("hidden") && ((!empty(localStorage.getItem("username")) && !manualDisconnect && requiresReconnect) || manualDisconnect)) {
 					manualDisconnect = false;
 					requiresReconnect = false;
 
@@ -517,7 +590,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				break;
 			case "Reconnecting":
 				divClients.innerHTML = "";
-				
+
 				buttonServer.classList.remove("active");
 				buttonServer.classList.add("processing");
 				break;

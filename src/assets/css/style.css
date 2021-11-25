@@ -445,3 +445,34 @@ input[type=number] {
 	display:inline-block;
 	vertical-align:top;
 }
+
+.x-notification {
+	box-shadow:var(--shadow-smooth);
+}
+.x-notification button {
+	color:var(--accent-contrast);
+	font-weight:bold;
+	border:none;
+	outline:none;
+	height:36px;
+	padding:0 15px 0 15px;
+	border-radius:var(--border-radius);
+	display:inline-block;
+	cursor:pointer;
+	opacity:0.8;
+	transition:opacity 0.25s;
+}
+#desktop .x-notification button:hover {
+	opacity:1;
+}
+.x-notification .buttons {
+	text-align:right;
+	padding-top:10px;
+}
+.x-notification .decline {
+	background:rgb(220,40,20);
+}
+.x-notification .accept {
+	margin-left:10px;
+	background:var(--accent-first);
+}

@@ -10,6 +10,8 @@ module.exports = class ConnectionManager {
 		this.clientLimit = clientLimit;
 		this.clients = {};
 
+		this.permissionManager = new PermissionManager(this);
+
 		if(pingInterval !== false) {
 			this.ping = setInterval(() => {
 				this.io.to("network").emit("ping");
@@ -118,18 +120,17 @@ module.exports = class ConnectionManager {
 
 			let color = utils.getColor(address, this.clients);
 			
-			let permissionManager = new PermissionManager(this);
-			permissionManager.attach(socket);
+			this.permissionManager.attach(socket);
 			
-			let uploadManager = new UploadManager(this, permissionManager);
+			let uploadManager = new UploadManager(this, this.permissionManager);
 			uploadManager.attach(socket);
 
-			permissionManager.on("change", (state) => {
+			this.permissionManager.on("change", (state) => {
 				this.clients[address]["permissionManager"] = state;
 				uploadManager.updatePermissionManager(state);
 			});
 
-			this.clients[address] = { socket:socket, username:username, key:null, uploadManager:uploadManager, permissionManager:permissionManager, color:color.index };
+			this.clients[address] = { socket:socket, username:username, key:null, uploadManager:uploadManager, permissionManager:this.permissionManager, color:color.index };
 
 			this.attach(socket);
 
@@ -151,6 +152,8 @@ module.exports = class ConnectionManager {
 
 	async removeClient(address) {
 		delete this.clients[address];
+
+		this.permissionManager.remove(address);
 
 		await this.saveClients();
 		await this.broadcastList(true);
