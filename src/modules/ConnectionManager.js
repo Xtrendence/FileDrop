@@ -59,7 +59,7 @@ module.exports = class ConnectionManager {
 
 	usernameTaken(username) {
 		Object.keys(this.clients).map(ip => {
-			if(username === this.clients[ip]["username"]) {
+			if(username.toLowerCase() === this.clients[ip]["username"].toLowerCase()) {
 				return true;
 			}
 		});
