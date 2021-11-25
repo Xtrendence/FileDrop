@@ -356,9 +356,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	function setStatus(status) {
-		let html = `<span>${ip}:${port}</span><span class="separator"> ‹ </span><span>${status}</span>`;
+		let html = `<span>${ip}:${port}</span><span class="separator"> ‹ </span><span class="status">${status}</span>`;
 		if(!divApp.classList.contains("hidden") && !empty(localStorage.getItem("username"))) {
-			html = `<span>${ip}:${port}</span><span class="separator"> ‹ </span><span>${status}<span class="separator-required"> ‹ </span>${localStorage.getItem("username")}</span>`;
+			html = `<span>${ip}:${port}</span><span class="separator"> ‹ </span><span class="status">${status}</span><span class="separator-required"> ‹ </span><span>${localStorage.getItem("username")}</span>`;
 		}
 
 		buttonServer.innerHTML = html;

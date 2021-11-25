@@ -1,4 +1,3 @@
-const fs = require("fs");
 const utils = require("./modules/Utils");
 const DBManager = require("./modules/DBManager");
 const ConnectionManager = require("./modules/ConnectionManager");

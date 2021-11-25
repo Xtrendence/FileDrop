@@ -404,6 +404,9 @@ input[type=number] {
 	color:var(--main-contrast-light);
 	background:var(--main-first-transparent);
 }
+.server-button.active .status {
+	color:var(--accent-first);
+}
 .server-button.processing {
 	color:var(--accent-contrast);
 	background:var(--accent-first);
