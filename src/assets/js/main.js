@@ -1,8 +1,12 @@
 document.addEventListener("DOMContentLoaded", async () => {
 	if(empty(localStorage.getItem("privateKey")) || empty(localStorage.getItem("publicKey"))) {
+		showLoading(60000, "Generating Keys...");
+
 		CryptoFD.generateRSAKeys().then(keys => {
 			localStorage.setItem("privateKey", keys.privateKey);
 			localStorage.setItem("publicKey", keys.publicKey);
+
+			hideLoading();
 		}).catch(error => {
 			console.log(error);
 		});

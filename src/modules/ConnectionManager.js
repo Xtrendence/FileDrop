@@ -141,7 +141,7 @@ module.exports = class ConnectionManager {
 					uploadManager.updatePermissionManager(state);
 				});
 
-				this.clients[address] = { socket:socket, username:username, key:null, uploadManager:uploadManager, permissionManager:this.permissionManager, color:color.index };
+				this.clients[address] = { socket:socket, username:username, key:key, uploadManager:uploadManager, permissionManager:this.permissionManager, color:color.index };
 
 				this.attach(socket);
 
