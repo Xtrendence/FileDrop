@@ -91,13 +91,15 @@ module.exports = class ConnectionManager {
 	}
 
 	usernameTaken(username) {
+		let taken = false;
+
 		Object.keys(this.clients).map(ip => {
 			if(username.toLowerCase() === this.clients[ip]["username"].toLowerCase()) {
-				return true;
+				taken = true;
 			}
 		});
 
-		return false;
+		return taken;
 	}
 
 	clientLimitReached() {
