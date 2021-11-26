@@ -1,6 +1,6 @@
 const validKeys = {
-	1: {
-		publickey: `-----BEGIN PUBLIC KEY-----
+	0: {
+		publicKey: `-----BEGIN PUBLIC KEY-----
 		MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA0z3+bTc8bZbnjQVA6PkG
 		WtIvs4f7mzD5R5Krz7fdhvfXsjiGNmT/bUax78AhPa+10QT0efoRVUhAlsfT2XkO
 		vZzcd+B9cEt6KOo+yESJvM6KkkKmq9i80V+8CwEPbPdJXs0s27nXWDGhJHavSVNG
@@ -66,8 +66,8 @@ const validKeys = {
 		AUIfB0KqP8h0/DVIcvnhmIfYxr1xwzXO7X8nUuwNznAQTKo5ADB4Q5KnmN/idw==
 		-----END RSA PRIVATE KEY-----`,
 	},
-	2: {
-		publickey: `-----BEGIN PUBLIC KEY-----
+	1: {
+		publicKey: `-----BEGIN PUBLIC KEY-----
 		MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAmFZvIbW0Uw5yPAv9k6gs
 		QzrKrIaZ58FhIlonXdB/ucLs4ok6bwUauvDhz9gX5cF6U7VL4Xh2yA22WI5ih5b2
 		PTF50BADfDFQltg1yVHJ+rBoNJrkw0g8Xv0cFXoR6yRTdeyi4WpLigntzF2PH2VV
@@ -133,8 +133,8 @@ const validKeys = {
 		SHypNk4RyXalzUKTPbLm1geWNl3ITnw9QHBMlt5Xqiu671A4SgxdmHQ9Ww==
 		-----END RSA PRIVATE KEY-----`
 	},
-	3: {
-		publickey: `-----BEGIN PUBLIC KEY-----
+	2: {
+		publicKey: `-----BEGIN PUBLIC KEY-----
 		MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAqmhr65tCAyjNx30Qkzd8
 		C8YKp+VnTPGLf+r8UTspszEJdbowgz7ZugH0W1oUqnUMbcB5krfRuftRWFdRPyp9
 		Jdsooz2AKj9olx167mCgEDoO7EfNcNzL3sBEt0u1Gxvn7Wpq0FSpkcJLd7ztT3pR

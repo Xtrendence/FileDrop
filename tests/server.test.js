@@ -170,9 +170,9 @@ describe("API Testing", () => {
 
 		describe("Test the addClient() method with a valid key", () => {
 			test("Should add both clients", done => {
-				connectionManager.addClient(testClients[0], "TestUsername1", validKeys["1"].publickey);
-				connectionManager.addClient(testClients[1], "TestUsername2", validKeys["2"].publickey);
-				connectionManager.addClient(testClients[2], "TestUsername3", validKeys["3"].publickey);
+				connectionManager.addClient(testClients[0], "TestUsername1", validKeys["0"].publicKey);
+				connectionManager.addClient(testClients[1], "TestUsername2", validKeys["1"].publicKey);
+				connectionManager.addClient(testClients[2], "TestUsername3", validKeys["2"].publicKey);
 				expect(Object.keys(connectionManager.clients).length).toEqual(3);
 				done();
 			});
@@ -180,7 +180,7 @@ describe("API Testing", () => {
 
 		describe("Test the clientLimitReached() method by tryng to add another client", () => {
 			test("Should still have 3 clients", done => {
-				connectionManager.addClient(testClients[3], "TestUsername4", validKeys["1"].publickey);
+				connectionManager.addClient(testClients[3], "TestUsername4", validKeys["0"].publicKey);
 				expect(Object.keys(connectionManager.clients).length).toEqual(3);
 				done();
 			});
