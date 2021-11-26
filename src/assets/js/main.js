@@ -323,6 +323,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 					spanUploadSubtitle.textContent = percentage + "%";
 
 					divProgressForeground.style.width = percentage + "%";
+
+					if(divUpload.classList.contains("hidden")) {
+						uploader.destroy();
+						reader.destroy();
+
+						Notify.success({ 
+							title: "Upload Cancelled", 
+							description: "The upload has been cancelled.", 
+							duration: 4000,
+							color: "var(--accent-contrast)",
+							background: "var(--accent-third)"
+						});
+					}
 				});
 
 				reader.on("done", (encryption, filename) => {

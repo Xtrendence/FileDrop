@@ -6,32 +6,35 @@ class ChunkReader {
 		this.currentChunk = currentChunk;
 		this.offset = offset;
 		this.events = {};
+		this.stop = false;
 	}
 
 	createReader() {
 		this.reader = new FileReader();
 
 		this.reader.onload = async (event) => {
-			let content = event.target.result;
+			if(!this.stop) {
+				let content = event.target.result;
 
-			let data = { chunkData:content, chunk:this.currentChunk, offset:this.offset };
+				let data = { chunkData:content, chunk:this.currentChunk, offset:this.offset };
 
-			if(this.encryption) {
-				let encoded = CryptoFD.encode(content);
-				let encrypted = CryptoFD.encryptAES(encoded, this.key);
+				if(this.encryption) {
+					let encoded = CryptoFD.encode(content);
+					let encrypted = CryptoFD.encryptAES(encoded, this.key);
 
-				data = { chunkData:encrypted, key:this.encryptedKey, chunk:this.currentChunk, offset:this.offset };
-			}
+					data = { chunkData:encrypted, key:this.encryptedKey, chunk:this.currentChunk, offset:this.offset };
+				}
 
-			if(this.hasEvent("chunkData")) {
-				this.events["chunkData"](data);
-			}
+				if(this.hasEvent("chunkData")) {
+					this.events["chunkData"](data);
+				}
 
-			if(this.offset < this.file.size) {
-				this.nextChunk();
-			} else {
-				if(this.hasEvent("done")) {
-					this.events["done"](this.encryption, this.file.name);
+				if(this.offset < this.file.size) {
+					this.nextChunk();
+				} else {
+					if(this.hasEvent("done")) {
+						this.events["done"](this.encryption, this.file.name);
+					}
 				}
 			}
 		}
@@ -56,21 +59,23 @@ class ChunkReader {
 	}
 
 	nextChunk() {
-		this.currentChunk++;
+		if(!this.stop) {
+			this.currentChunk++;
 
-		let chunk = this.file.slice(this.offset, Math.min(this.offset + this.chunkSize, this.file.size));
+			let chunk = this.file.slice(this.offset, Math.min(this.offset + this.chunkSize, this.file.size));
 
-		this.reader.readAsArrayBuffer(chunk);
+			this.reader.readAsArrayBuffer(chunk);
 
-		this.offset += this.chunkSize;
+			this.offset += this.chunkSize;
 
-		let percentage = Math.floor((this.offset / this.file.size * 100));
-		if(percentage > 100) {
-			percentage = 100;
-		}
-
-		if(this.hasEvent("nextChunk")) {
-			this.events["nextChunk"](percentage, this.currentChunk, this.offset);
+			let percentage = Math.floor((this.offset / this.file.size * 100));
+			if(percentage > 100) {
+				percentage = 100;
+			}
+			
+			if(this.hasEvent("nextChunk")) {
+				this.events["nextChunk"](percentage, this.currentChunk, this.offset);
+			}
 		}
 	}
 
@@ -78,5 +83,10 @@ class ChunkReader {
 		this.encryption = true;
 		this.key = CryptoFD.generateAESKey();
 		this.encryptedKey = await CryptoFD.encryptRSA(this.key, publicKey);
+	}
+
+	destroy() {
+		this.stop = true;
+		this.reader = null;
 	}
 }
