@@ -4,9 +4,9 @@
 	"description": "An encrypted file sharing application that leverages web sockets to allow users to send and receive files.",
 	"main": "src/server.js",
 	"scripts": {
-		"test": "jest",
-		"test-async": "jest --detectOpenHandles",
-		"test-coverage": "jest --coverage",
+		"test": "jest --verbose",
+		"test-async": "jest --detectOpenHandles --verbose",
+		"test-coverage": "jest --coverage --verbose",
 		"start": "node src/server.js",
 		"dev": "nodemon src/server.js",
 		"dist": "sudo electron-builder -mwl",
