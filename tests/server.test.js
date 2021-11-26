@@ -227,6 +227,7 @@ describe("API Testing", () => {
 					done();
 				});
 
+				client1.emit("update-permission", { to:"1", whitelist:{ ["0"]: { allowed:true }, response:true }});
 				client2.emit("update-permission", { to:"0", whitelist:{ ["1"]: { allowed:true }, response:true }});
 			});
 		});

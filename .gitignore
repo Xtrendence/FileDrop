@@ -1,4 +1,5 @@
 node_modules
 db
+testDB
 dist
 coverage

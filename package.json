@@ -7,6 +7,8 @@
 		"test": "jest --verbose",
 		"test-async": "jest --detectOpenHandles --verbose",
 		"test-coverage": "jest --coverage --verbose",
+		"test-client": "jest tests/client.test.js --verbose",
+		"test-server": "jest tests/server.test.js --verbose",
 		"start": "node src/server.js",
 		"dev": "nodemon src/server.js",
 		"dist": "sudo electron-builder -mwl",
