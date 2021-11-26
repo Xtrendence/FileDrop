@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+	<head>
+		<link rel="apple-touch-icon" sizes="180x180" href="./assets/img/favicon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="./assets/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="./assets/img/favicon/favicon-16x16.png">
+		<link rel="manifest" href="./assets/img/favicon/site.webmanifest">
+		<link rel="mask-icon" href="./assets/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+		<link rel="shortcut icon" href="./assets/img/favicon/favicon.ico">
+		<meta name="msapplication-TileColor" content="#9790ad">
+		<meta name="msapplication-config" content="./assets/img/favicon/browserconfig.xml">
+		<meta name="theme-color" content="#c8c5de">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<meta name="description" content="FileDrop - The Encrypted File Sharing Application">
+		<meta name="keywords" content="Xtrendence,Adrian,Khodadad,Nouchin,FileDrop,WebSocket,Socket.IO,Server,File-Sharing,Upload">
+		<meta name="author" content="Xtrendence">
+		<meta charset="UTF-8">
+		<script src="./assets/js/utils.js"></script>
+		<script src="./assets/js/portableMain.js"></script>
+		<link rel="stylesheet" href="./assets/css/dark.css">
+		<link rel="stylesheet" href="./assets/css/style.css">
+		<link rel="stylesheet" href="./assets/css/resize.css">
+		<title>FileDrop</title>
+	</head>
+	<body class="portable">
+		<div class="titlebar">
+			<div class="window-buttons">
+				<button class="close-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"/></svg></button>
+				<button class="minimize-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 208H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h384c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/></svg></button>
+			</div>
+			<img src="./assets/img/icon.png">
+		</div>
+		<div class="portable-wrapper">
+			<span id="server-address"><%= ip + ":" + port %></span>
+			<button id="open-button">Open In Browser</button>
+			<button id="stop-button">Stop Server</button>
+		</div>
+	</body>
+</html>

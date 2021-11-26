@@ -2,11 +2,32 @@
 	"name": "filedrop",
 	"version": "1.0.0",
 	"description": "An encrypted file sharing application that leverages web sockets to allow users to send and receive files.",
-	"main": "server.js",
+	"main": "src/server.js",
 	"scripts": {
 		"test": "jest --detectOpenHandles",
 		"start": "node src/server.js",
-		"dev": "nodemon src/server.js"
+		"dev": "nodemon src/server.js",
+		"dist": "sudo electron-builder -mwl",
+		"electron-start": "electron src/server.js",
+		"electron-dev": "nodemon --exec electron src/server.js"
+	},
+	"build": {
+		"appId": "com.xtrendence.filedrop",
+		"files": ["src/", "node_modules/", "package.json"],
+		"asar": false,
+		"mac": {
+			"target": ["dmg", "zip"],
+			"artifactName": "FileDrop.${version}.Mac.${ext}"
+		},
+		"win": {
+			"target": ["nsis", "zip"],
+			"artifactName": "FileDrop.${version}.Windows.${ext}",
+			"icon": "build/icon.ico"
+		},
+		"linux": {
+			"target": ["AppImage", "deb"],
+			"artifactName": "FileDrop.${version}.Linux.${ext}"
+		}
 	},
 	"jest": {
 		"testMatch": [
@@ -27,11 +48,16 @@
 		"@types/jest": "^27.0.3",
 		"cors": "^2.8.5",
 		"ejs": "^3.1.6",
+		"electron-localshortcut": "^3.2.1",
 		"express": "^4.17.1",
 		"jest": "^27.3.1",
 		"nodemon": "^2.0.15",
 		"pouchdb": "^7.2.2",
 		"socket.io": "^4.4.0",
 		"supertest": "^6.1.6"
+	},
+	"devDependencies": {
+		"electron": "^16.0.2",
+		"electron-builder": "^22.14.5"
 	}
 }

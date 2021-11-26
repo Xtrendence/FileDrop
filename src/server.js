@@ -5,7 +5,16 @@ const ConnectionManager = require("./modules/ConnectionManager");
 const ip = utils.getIP();
 const port = 2180;
 
-const app = require("./app");
+// Default: false. Set to true when using Electron Builder to build the app.
+const portable = false;
+
+let app;
+if(portable) {
+	app = require("./portableApp");
+} else {
+	app = require("./app");
+}
+
 const server = app.listen(port);
 
 const io = require("socket.io")(server, {
