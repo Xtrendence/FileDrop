@@ -25,7 +25,9 @@ module.exports = class ConnectionManager {
 		socket.on("disconnect", async () => {
 			socket.leave("network");
 
-			this.clients[address]?.permissionManager.off("change");
+			if(address in this.clients) {
+				this.clients[address].permissionManager.off("change");
+			}
 
 			await this.removeClient(address);
 		});
