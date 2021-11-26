@@ -106,19 +106,19 @@ describe("API Testing", () => {
 
 		io.on("connection", socket => {
 			if(testClients.length === 0) {
-				socket.handshake.address = "::ffff:192.168.2.100";
+				socket.handshake.address = "0";
 			}
 
 			if(testClients.length === 1) {
-				socket.handshake.address = "::ffff:192.168.2.101";
+				socket.handshake.address = "1";
 			}
 
 			if(testClients.length === 2) {
-				socket.handshake.address = "::ffff:192.168.2.102";
+				socket.handshake.address = "2";
 			}
 
 			if(testClients.length === 3) {
-				socket.handshake.address = "::ffff:192.168.2.103";
+				socket.handshake.address = "3";
 			}
 
 			testClients.push(socket);
@@ -139,70 +139,96 @@ describe("API Testing", () => {
 		await dbManager.db.destroy();
 	});
 
-	describe("Check if client list is empty", () => {
-		test("Should return 0", async () => {
-			expect(Object.keys(connectionManager.clients).length).toEqual(0);
+	describe("ConnectionManager Tests", () => {
+		describe("Check if client list is empty", () => {
+			test("Should return 0", async () => {
+				expect(Object.keys(connectionManager.clients).length).toEqual(0);
+			});
+		});
+
+		describe("Check that 4 clients are connected", () => {
+			test("Should return 4", async () => {
+				expect(testClients.length).toEqual(4);
+			});
+		});
+
+		describe("Test the attach() method", () => {
+			test("Should work", async () => {
+				expect(connectionManager.attach(testClients[0])).toEqual(undefined);
+				expect(connectionManager.attach(testClients[1])).toEqual(undefined);
+				expect(connectionManager.attach(testClients[2])).toEqual(undefined);
+			});
+		});
+		
+		describe("Test the addClient() method with a wrong key", () => {
+			test("Should not add any clients", done => {
+				connectionManager.addClient(testClients[0], "TestUsername1", "<>");
+				expect(Object.keys(connectionManager.clients).length).toEqual(0);
+				done();
+			});
+		});
+
+		describe("Test the addClient() method with a valid key", () => {
+			test("Should add both clients", done => {
+				connectionManager.addClient(testClients[0], "TestUsername1", validKeys["1"].publickey);
+				connectionManager.addClient(testClients[1], "TestUsername2", validKeys["2"].publickey);
+				connectionManager.addClient(testClients[2], "TestUsername3", validKeys["3"].publickey);
+				expect(Object.keys(connectionManager.clients).length).toEqual(3);
+				done();
+			});
+		});
+
+		describe("Test the clientLimitReached() method by tryng to add another client", () => {
+			test("Should still have 3 clients", done => {
+				connectionManager.addClient(testClients[3], "TestUsername4", validKeys["1"].publickey);
+				expect(Object.keys(connectionManager.clients).length).toEqual(3);
+				done();
+			});
+		});
+
+		describe("Test the removeClient() method", () => {
+			test("Should leave 2 clients", done => {
+				connectionManager.removeClient(testClients[2].handshake.address);
+				expect(Object.keys(connectionManager.clients).length).toEqual(2);
+				done();
+			});
+		});
+
+		describe("Test the usernameTaken() method", () => {
+			test("Should return true", async () => {
+				expect(connectionManager.usernameTaken("TestUsername1")).toEqual(true);
+			});
+		});
+
+		describe("Test the clientExists() method", () => {
+			test("Should return true, then false", async () => {
+				expect(connectionManager.clientExists(testClients[1].handshake.address)).toEqual(true);
+				expect(connectionManager.clientExists(testClients[3].handshake.address)).toEqual(false);
+			});
 		});
 	});
 
-	describe("Check that 4 clients are connected", () => {
-		test("Should return 4", async () => {
-			expect(testClients.length).toEqual(4);
-		});
-	});
+	describe("PermissionManager Tests", () => {
+		describe("Test if client 1 can send client 2 a request to send files", () => {
+			test("Should work", done => {
+				client2.on("ask-permission", data => {
+					expect(data).not.toBeNull();
+					done();
+				});
 
-	describe("Test the attach() method", () => {
-		test("Should work", async () => {
-			expect(connectionManager.attach(testClients[0])).toEqual(undefined);
-			expect(connectionManager.attach(testClients[1])).toEqual(undefined);
-			expect(connectionManager.attach(testClients[2])).toEqual(undefined);
+				client1.emit("ask-permission", { from:testClients[0].handshake.address, to:testClients[1].handshake.address });
+			});
 		});
-	});
-	
-	describe("Test the addClient() method with a wrong key", () => {
-		test("Should not add any clients", done => {
-			connectionManager.addClient(testClients[0], "TestUsername1", "<>");
-			expect(Object.keys(connectionManager.clients).length).toEqual(0);
-			done();
-		});
-	});
 
-	describe("Test the addClient() method with a valid key", () => {
-		test("Should add both clients", done => {
-			connectionManager.addClient(testClients[0], "TestUsername1", validKeys["1"].publickey);
-			connectionManager.addClient(testClients[1], "TestUsername2", validKeys["2"].publickey);
-			connectionManager.addClient(testClients[2], "TestUsername3", validKeys["3"].publickey);
-			expect(Object.keys(connectionManager.clients).length).toEqual(3);
-			done();
-		});
-	});
+		describe("Test if client 1 can whitelist client 2", () => {
+			test("Should work", done => {
+				client1.on("update-permission", data => {
+					expect(data).not.toBeNull();
+					done();
+				});
 
-	describe("Test the clientLimitReached() method by tryng to add another client", () => {
-		test("Should still have 3 clients", done => {
-			connectionManager.addClient(testClients[3], "TestUsername4", validKeys["1"].publickey);
-			expect(Object.keys(connectionManager.clients).length).toEqual(3);
-			done();
-		});
-	});
-
-	describe("Test the removeClient() method", () => {
-		test("Should leave 2 clients", done => {
-			connectionManager.removeClient(testClients[2].handshake.address);
-			expect(Object.keys(connectionManager.clients).length).toEqual(2);
-			done();
-		});
-	});
-
-	describe("Test the usernameTaken() method", () => {
-		test("Should return true", async () => {
-			expect(connectionManager.usernameTaken("TestUsername1")).toEqual(true);
-		});
-	});
-
-	describe("Test the clientExists() method", () => {
-		test("Should return true, then false", async () => {
-			expect(connectionManager.clientExists(testClients[1].handshake.address)).toEqual(true);
-			expect(connectionManager.clientExists(testClients[3].handshake.address)).toEqual(false);
+				client2.emit("update-permission", { to:"0", whitelist:{ ["1"]: { allowed:true }, response:true }});
+			});
 		});
 	});
 });
