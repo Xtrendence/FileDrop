@@ -15,19 +15,32 @@
 	},
 	"build": {
 		"appId": "com.xtrendence.filedrop",
-		"files": ["src/", "node_modules/", "package.json"],
+		"files": [
+			"src/",
+			"node_modules/",
+			"package.json"
+		],
 		"asar": false,
 		"mac": {
-			"target": ["dmg", "zip"],
+			"target": [
+				"dmg",
+				"zip"
+			],
 			"artifactName": "FileDrop.${version}.Mac.${ext}"
 		},
 		"win": {
-			"target": ["nsis", "zip"],
+			"target": [
+				"nsis",
+				"zip"
+			],
 			"artifactName": "FileDrop.${version}.Windows.${ext}",
 			"icon": "build/icon.ico"
 		},
 		"linux": {
-			"target": ["AppImage", "deb"],
+			"target": [
+				"AppImage",
+				"deb"
+			],
 			"artifactName": "FileDrop.${version}.Linux.${ext}"
 		}
 	},
@@ -56,6 +69,7 @@
 		"nodemon": "^2.0.15",
 		"pouchdb": "^7.2.2",
 		"socket.io": "^4.4.0",
+		"socket.io-client": "^4.4.0",
 		"supertest": "^6.1.6"
 	},
 	"devDependencies": {
