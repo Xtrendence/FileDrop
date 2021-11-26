@@ -26,7 +26,7 @@ module.exports = class UploadManager {
 			let whitelist = this.getWhitelist(data.to);
 			let clients = this.connectionManager.clients;
 			if(whitelist.includes(data.from)) {
-				this.connectionManager.io.to(clients[data.to].socket.id).emit("uploaded", { from:data.from, encryption:data.encryption, filename:data.filename });
+				this.connectionManager.io.to(clients[data.to].socket.id).emit("uploaded", { from:data.from, encryption:data.encryption, filename:data.filename, cancelled:data.cancelled });
 			}
 		});
 

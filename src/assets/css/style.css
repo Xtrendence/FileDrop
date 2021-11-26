@@ -617,6 +617,13 @@ input[type=number] {
 #desktop .x-notification button:hover {
 	opacity:0.8;
 }
+.x-notification .live-span {
+	font-size:16px;
+	position:absolute;
+	right:16px;
+	bottom:16px;
+	color:var(--accent-contrast);
+}
 .x-notification .buttons {
 	text-align:right;
 	padding-top:10px;

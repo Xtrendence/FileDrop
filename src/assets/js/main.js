@@ -325,6 +325,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 					divProgressForeground.style.width = percentage + "%";
 
 					if(divUpload.classList.contains("hidden")) {
+						uploader.finish(true);
+
 						uploader.destroy();
 						reader.destroy();
 
@@ -339,7 +341,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 				});
 
 				reader.on("done", (encryption, filename) => {
-					uploader.finish();
+					uploader.finish(false);
 
 					let notificationDescription = filename + " has been uploaded without encryption.";
 					if(encryption) {
@@ -594,20 +596,50 @@ document.addEventListener("DOMContentLoaded", async () => {
 		if(data.chunk === 1) {
 			Notify.alert({
 				title: "Receiving File",
-				description: "You are receiving a file...",
+				description: "You are receiving a file... ",
 				color: "var(--accent-contrast)",
 				background: "var(--accent-first-transparent-low)",
-				duration: 8000
+				duration: 999999,
+				html: `<span class="live-span" id="receiving-percentage-${btoa(data.filename)}">0%</span>`
 			});
 
 			saver = new FileSaver(localStorage.getItem("privateKey"), data.filename, data.filesize);
+		}
+
+		let percentage = Math.floor((data.offset / saver.fileSize * 100));
+		if(percentage > 100) {
+			percentage = 100;
+		}
+
+		let id = "receiving-percentage-" + btoa(saver.fileName);
+		if(document.getElementById(id)) {
+			document.getElementById(id).textContent = percentage + "%";
+
+			if(percentage === 100) {
+				Notify.hideNotification(document.getElementById(id).parentElement.parentElement);
+			}
 		}
 
 		saver.append(data);
 	});
 
 	socket.on("uploaded", data => {
-		saver.save();
+		if(data.cancelled !== true) {
+			saver.save();
+		} else {
+			Notify.success({ 
+				title: "Upload Cancelled", 
+				description: "The upload has been cancelled by the other client.", 
+				duration: 4000,
+				color: "var(--accent-contrast)",
+				background: "var(--accent-third)"
+			});
+
+			let id = "receiving-percentage-" + btoa(saver.fileName);
+			if(document.getElementById(id)) {
+				Notify.hideNotification(document.getElementById(id).parentElement.parentElement);
+			}
+		}
 	});
 
 	socket.on("update-permission", data => {

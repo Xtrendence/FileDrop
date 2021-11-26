@@ -25,10 +25,8 @@ class Uploader {
 		}
 	}
 
-	finish() {
-		if(!this.stop) {
-			this.socket.emit("uploaded", { from:this.from, to:this.to, encryption:this.encryption, filename:this.file.name });
-		}
+	finish(cancelled) {
+		this.socket.emit("uploaded", { from:this.from, to:this.to, encryption:this.encryption, filename:this.file.name, cancelled:cancelled });
 	}
 
 	destroy() {
