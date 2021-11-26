@@ -3,7 +3,9 @@ const PouchDB = require("pouchdb");
 module.exports = class DBManager {
 	constructor(db) {
 		this.db = new PouchDB(db);
+	}
 
+	async clear() {
 		this.remove("clients").then(() => {
 			console.log("\x1b[34m", "Cleared Previous Clients", "\x1b[0m");
 		}).catch(error => {
@@ -68,9 +70,9 @@ module.exports = class DBManager {
 	exists(key) {
 		return new Promise((resolve, reject) => {
 			this.db.get(key).then(() => {
-				resolve();
+				resolve(true);
 			}).catch(() => {
-				reject();
+				reject(false);
 			});
 		});
 	}

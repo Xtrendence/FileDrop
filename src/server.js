@@ -26,6 +26,7 @@ const io = require("socket.io")(server, {
 });
 
 const dbManager = new DBManager("db");
+dbManager.clear();
 
 const connectionManager = new ConnectionManager(io, dbManager, 64, 5000);
 
