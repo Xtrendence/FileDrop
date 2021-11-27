@@ -53,7 +53,8 @@ class CryptoFD {
 		let rsa = forge.pki.rsa;
 
 		return new Promise((resolve, reject) => {
-			rsa.generateKeyPair({ bits:4096, workers:-1 }, (error, keys) => {
+			// TODO: Increase RSA key size after testing.
+			rsa.generateKeyPair({ bits:1024, workers:-1 }, (error, keys) => {
 				if(error) {
 					reject(error);
 				} else {
