@@ -60,13 +60,13 @@ describe("Client Testing", () => {
 	});
 
 	describe("Login", () => {
-		jest.setTimeout(60000);
+		jest.setTimeout(120000);
 		test("Should work", async () => {
 			await page1.waitForSelector(".loading-screen", { hidden:true, timeout:90000 });
 			expect(await page1.evaluate('localStorage.getItem("publicKey")')).not.toBeNull();
 			await page1.focus("#input-username");
 			await page1.keyboard.type("Username1");
-			await page1.waitForTimeout(1000);
+			await page1.waitForTimeout(5000);
 			expect(await page1.evaluate('document.querySelector("#server-button").textContent')).toContain("Connected");
 			await page1.waitForTimeout(500);
 			expect(await page1.evaluate('document.querySelector("#input-username").value')).not.toEqual("");
@@ -79,7 +79,7 @@ describe("Client Testing", () => {
 			expect(await page2.evaluate('localStorage.getItem("publicKey")')).not.toBeNull();
 			await page2.focus("#input-username");
 			await page2.keyboard.type("Username2");
-			await page2.waitForTimeout(1000);
+			await page2.waitForTimeout(5000);
 			expect(await page2.evaluate('document.querySelector("#server-button").textContent')).toContain("Connected");
 			await page2.waitForTimeout(500);
 			expect(await page2.evaluate('document.querySelector("#input-username").value')).not.toEqual("");
