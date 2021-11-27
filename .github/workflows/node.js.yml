@@ -29,4 +29,3 @@ jobs:
     - run: npm ci
     - run: npm run build --if-present
     - run: npm run test-server
-    - run: npm run start & sleep 5 & npm run test-client
