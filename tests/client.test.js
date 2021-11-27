@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const fs = require("fs");
 
 const utils = require("../src/modules/Utils");
 
@@ -32,40 +33,60 @@ describe("Client Testing", () => {
 	});
 
 	describe("Check RSA keys have been generated", () => {
+		jest.setTimeout(60000);
 		test("Should take a while but work", async () => {
-			let publicKey1 = validKeys["0"].publicKey;
-			let privateKey1 = validKeys["0"].privateKey;
-
-			let publicKey2 = validKeys["1"].publicKey;
-			let privateKey2 = validKeys["1"].privateKey;
-
-			storage1 = await page1.evaluate((publicKey, privateKey) => {
-				localStorage.setItem("publicKey", publicKey);
-				localStorage.setItem("privateKey", privateKey);
-
+			await page1.waitForSelector(".loading-screen", { hidden:true, timeout:90000 });
+			storage1 = await page1.evaluate(() => {
 				let storage = {};
 				storage["publicKey"] = localStorage.getItem("publicKey");
 				storage["privateKey"] = localStorage.getItem("privateKey");
-
 				return storage;
-			}, publicKey1, privateKey1);
+			});
 
-			storage2 = await page2.evaluate((publicKey, privateKey) => {
-				localStorage.setItem("publicKey", publicKey);
-				localStorage.setItem("privateKey", privateKey);
-
+			await page2.waitForSelector(".loading-screen", { hidden:true, timeout:90000 });
+			storage2 = await page2.evaluate(() => {
 				let storage = {};
 				storage["publicKey"] = localStorage.getItem("publicKey");
 				storage["privateKey"] = localStorage.getItem("privateKey");
-
 				return storage;
-			}, publicKey2, privateKey2);
+			});
 
-			expect(storage1["publicKey"]).toEqual(publicKey1);
-			expect(storage1["privateKey"]).toEqual(privateKey1);
+			expect(storage1["publicKey"]).toContain("PUBLIC");
+			expect(storage1["privateKey"]).toContain("PRIVATE");
 
-			expect(storage2["publicKey"]).toEqual(publicKey2);
-			expect(storage2["privateKey"]).toEqual(privateKey2);
+			expect(storage2["publicKey"]).toContain("PUBLIC");
+			expect(storage2["privateKey"]).toContain("PRIVATE");
+		});
+	});
+
+	describe("Login", () => {
+		jest.setTimeout(60000);
+		test("Should work", async () => {
+			await page1.waitForSelector(".loading-screen", { hidden:true, timeout:90000 });
+			expect(await page1.evaluate('localStorage.getItem("publicKey")')).not.toBeNull();
+			await page1.focus("#input-username");
+			await page1.keyboard.type("Username1");
+			expect(await page1.evaluate('document.querySelector("#server-button").textContent')).toContain("Connected");
+			await page1.waitForTimeout(500);
+			expect(await page1.evaluate('document.querySelector("#input-username").value')).not.toEqual("");
+			await page1.click("#confirm-username-button");
+			await page1.waitForTimeout(2000);
+			let class1 = await page1.evaluate('document.querySelector("#login-wrapper").getAttribute("class")');
+			expect(class1).toContain("hidden");
+
+			await page2.waitForSelector(".loading-screen", { hidden:true, timeout:90000 });
+			expect(await page2.evaluate('localStorage.getItem("publicKey")')).not.toBeNull();
+			await page2.focus("#input-username");
+			await page2.keyboard.type("Username2");
+			expect(await page2.evaluate('document.querySelector("#server-button").textContent')).toContain("Connected");
+			await page2.waitForTimeout(500);
+			expect(await page2.evaluate('document.querySelector("#input-username").value')).not.toEqual("");
+			await page2.click("#confirm-username-button");
+			await page2.waitForTimeout(2000);
+			let class2 = await page2.evaluate('document.querySelector("#login-wrapper").getAttribute("class")');
+			expect(class2).toContain("hidden");
+
+			jest.setTimeout(5000);
 		});
 	});
 });
