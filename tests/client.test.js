@@ -129,6 +129,23 @@ describe("Client Testing", () => {
 			await new Promise((resolve) => setTimeout(resolve, 2000));
 			html = await page1.evaluate('document.body.innerHTML');
 			expect(html).toContain("You can now send files to");
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+		});
+	});
+
+	describe("Send a file to client 2", () => {
+		test("Should send and download a file", async () => {
+			await page1.evaluate('document.getElementsByClassName("client-action")[0].click()');
+			await new Promise((resolve) => setTimeout(resolve, 500));
+			let elementHandle = await page1.$("#upload-file");
+			await elementHandle.uploadFile("./src/assets/img/Icon.png");
+			await new Promise((resolve) => setTimeout(resolve, 500));
+			await page1.evaluate('document.getElementById("upload-file").dispatchEvent(new Event("change"))');
+			await new Promise((resolve) => setTimeout(resolve, 500));
+			await page1.click("#upload-button");
+			await page2.waitForSelector(".live-span", { timeout:3000 });
+			let html = await page2.evaluate('document.body.innerHTML');
+			expect(html).toContain("You are receiving a file");
 		});
 	});
 });
