@@ -4,7 +4,7 @@
 	"description": "An encrypted file sharing application that leverages web sockets to allow users to send and receive files.",
 	"main": "src/server.js",
 	"scripts": {
-		"test": "jest --verbose",
+		"test": "jest tests/server.test.js --verbose && jest tests/client.test.js --verbose",
 		"test-async": "jest --detectOpenHandles --verbose",
 		"test-coverage": "jest --coverage --verbose",
 		"test-client": "jest tests/client.test.js --verbose",
