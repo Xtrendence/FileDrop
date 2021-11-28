@@ -25,6 +25,24 @@ module.exports = {
 		return ip.replace("::ffff:", "");
 	},
 
+	testingMode(args) {
+		if(!this.empty(args) && args[0] === "testing") {
+			return true;
+		}
+		return false;
+	},
+	
+	randomIP(clients) {
+		let ips = Object.keys(clients);
+		let ip = "192.168.1." + this.randomBetween(64, 256);
+		
+		while(ip in ips) {
+			ip = "192.168.1." + this.randomBetween(64, 256);
+		}
+
+		return ip;
+	},
+
 	validUsername(username) {
 		try {
 			if(username.length > 16) {
@@ -99,5 +117,15 @@ module.exports = {
 
 	epoch() {
 		return Math.floor(new Date().getTime() / 1000);
+	},
+
+	empty(value) {
+		if(typeof value === "object" && value !== null && Object.keys(value).length === 0) {
+			return true;
+		}
+		if(value === null || typeof value === "undefined" || value.toString().trim() === "") {
+			return true;
+		}
+		return false;
 	}
 }

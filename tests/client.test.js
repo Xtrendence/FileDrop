@@ -1,15 +1,23 @@
 const puppeteer = require("puppeteer");
+const { exec } = require("child_process");
 const fs = require("fs");
 
 const utils = require("../src/modules/Utils");
 
 const validKeys = require("./validKeys");
 
+let requireStart = true;
+
 describe("Client Testing", () => {
 	let storage1 = {}, storage2 = {};
 	let browser1, browser2, page1, page2;
 
 	beforeAll(async () => {
+		if(requireStart) {
+			exec("node src/server.js testing");
+			await new Promise((resolve) => setTimeout(resolve, 3000));
+		}
+
 		browser1 = await puppeteer.launch();
 		browser2 = await puppeteer.launch();
 
@@ -21,6 +29,10 @@ describe("Client Testing", () => {
 	});
 
 	afterAll(async () => {
+		exec("kill $(lsof -t -i:2180)");
+
+		await new Promise((resolve) => setTimeout(resolve, 4000));
+
 		await browser1.close();
 		await browser2.close();
 	});

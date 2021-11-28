@@ -1,4 +1,8 @@
 const utils = require("./modules/Utils");
+
+const args = process.argv.slice(2);
+let mode = utils.testingMode(args) ? "Test" : "";
+
 const DBManager = require("./modules/DBManager");
 const ConnectionManager = require("./modules/ConnectionManager");
 
@@ -33,10 +37,14 @@ const connectionManager = new ConnectionManager(io, dbManager, 64, 5000);
 io.on("connection", socket => {
 	socket.handshake.address = utils.IPv4(socket.handshake.address);
 
+	if(utils.testingMode(args)) {
+		socket.handshake.address = utils.randomIP(connectionManager.clients);
+	}
+
 	let address = socket.handshake.address;
 
 	if(utils.xssValid(address)) {
-		socket.emit("set-ip", socket.handshake.address);
+		socket.emit("set-ip", address);
 		
 		socket.on("random-username", () => {
 			socket.emit("random-username", utils.getUsername(connectionManager.clients));
@@ -58,7 +66,7 @@ io.on("connection", socket => {
 
 		socket.on("logout", () => {
 			socket.emit("logout");
-			connectionManager.removeClient(socket.handshake.address);
+			connectionManager.removeClient(address);
 		});
 	} else {
 		socket.emit("notify", { 
@@ -73,4 +81,4 @@ io.on("connection", socket => {
 	}
 });
 
-console.log("\x1b[35m", "Started Server: ", "\x1b[4m", "http://" + ip + ":" + server.address().port, "\x1b[0m");
+console.log("\x1b[35m", `Started ${mode} Server: `, "\x1b[4m", "http://" + ip + ":" + server.address().port, "\x1b[0m");
