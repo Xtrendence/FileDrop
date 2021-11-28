@@ -118,8 +118,16 @@ describe("Client Testing", () => {
 		test("Should work", async () => {
 			await page1.evaluate('document.getElementsByClassName("client-action")[0].click()');
 			await page2.waitForSelector(".accept", { timeout:5000 });
+			let html = await page2.evaluate('document.body.innerHTML');
+			expect(html).toContain("would like to send you a file");
+		});
+	});
+
+	describe("Accept client 1's request", () => {
+		test("Should work", async () => {
 			await page2.evaluate('document.getElementsByClassName("accept")[0].click()');
-			let html = await page1.evaluate('document.body.innerHTML');
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+			html = await page1.evaluate('document.body.innerHTML');
 			expect(html).toContain("You can now send files to");
 		});
 	});
