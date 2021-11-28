@@ -17,6 +17,7 @@
 	},
 	"build": {
 		"appId": "com.xtrendence.filedrop",
+		"productName": "FileDrop",
 		"files": [
 			"src/",
 			"node_modules/",
