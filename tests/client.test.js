@@ -103,4 +103,24 @@ describe("Client Testing", () => {
 			jest.setTimeout(5000);
 		});
 	});
+
+	describe("Check client list", () => {
+		test("Should return Username2", async () => {
+			await page1.waitForSelector(".username", { timeout:5000 });
+			let username = await page1.evaluate('document.getElementsByClassName("username")[0].textContent');
+			let action = await page1.evaluate('document.getElementsByClassName("client-action")[0].textContent');
+			expect(username).toEqual("Username2");
+			expect(action).toEqual("Ask Permission");
+		});
+	});
+
+	describe("Ask client 2 for permission to send a file", () => {
+		test("Should work", async () => {
+			await page1.evaluate('document.getElementsByClassName("client-action")[0].click()');
+			await page2.waitForSelector(".accept", { timeout:5000 });
+			await page2.evaluate('document.getElementsByClassName("accept")[0].click()');
+			let html = await page1.evaluate('document.body.innerHTML');
+			expect(html).toContain("You can now send files to");
+		});
+	});
 });
