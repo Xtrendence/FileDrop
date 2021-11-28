@@ -1,11 +1,33 @@
 # FileDrop
 
+![Banner](./src/assets/img/Banner.png)
+
+### What is FileDrop?
+
 FileDrop is an application that allows for encrypted file sharing between two users through the use of web sockets.
+
+### How does it work?
+
+You download the application for the operating system you use from the [Releases](https://github.com/Xtrendence/FileDrop/releases) section, and run the app. Once you can see the IP and port of the server, it means it's working. You can then use any device on the same network to navigate to that IP and port. From there, you can choose a username and log in. Devices that are logged in would be able to see each other. At this point, you can ask for another client's permission to send them a file, or manually whitelist a client so they can send you a file whenever they wish.
+
+### How does the encryption work?
+
+First and foremost, all encryption is done on the client-side so that the server doesn't need to be trusted. This also increases performance as encryption is a resource-intensive task, and by distributing the workload between clients, the server can transfer files as fast as possible. When the page first loads, an RSA public/private key pair is generated and stored in the browser's local storage. The public key is then broadcasted to other clients. When the user chooses a file and clicks on the upload button, the file is split into chunks of 256KB. An 256-bit AES key is then generated, and the public RSA key of the client the user is sending a file to is used to encrypt the AES key. The AES key is then used to symmetrically encrypt each chunk before sending it to the server. The encrypted AES key is sent with the encrypted chunk data as well. The other client then uses their private key to decrypt the AES key, which they can use to decrypt the chunk data. Once all the chunks have been received, they're put together to form the original file, which is then downloaded to the client's device.
+
+### What does the app look like?
+
+**Login Page**
+
+![Login](https://i.imgur.com/ttK0u1m.png)
+
+**Application Page**
+
+![Application](https://i.imgur.com/7KbrnGv.png)
 
 ### Attributions
 
-|Resource                |URL                                                              |
-|------------------------|-----------------------------------------------------------------|
+|Resource                     |URL                                                         |
+|-----------------------------|------------------------------------------------------------|
 |Login Background             |[BG Jar](https://bgjar.com/)                                |
 |Main Background              |[SVG Backgrounds](https://www.svgbackgrounds.com/)          |
 |Font Awesome                 |[Font Awesome](https://www.fontawesome.com/)                |
