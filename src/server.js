@@ -12,11 +12,13 @@ const port = 2180;
 // Needs to be set to true when building the Electron app.
 let portable = utils.portableMode(args);
 
-let app;
+let app, db;
 if(portable) {
 	app = require("./portableApp");
+	db = utils.getUserDirectory();
 } else {
 	app = require("./app");
+	db = "db";
 }
 
 const server = app.listen(port);
@@ -29,7 +31,7 @@ const io = require("socket.io")(server, {
 	maxHttpBufferSize: 8192 * 1024
 });
 
-const dbManager = new DBManager("db");
+const dbManager = new DBManager(db);
 dbManager.clear();
 
 const connectionManager = new ConnectionManager(io, dbManager, 64, 5000);

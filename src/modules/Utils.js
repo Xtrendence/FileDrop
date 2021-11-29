@@ -40,6 +40,11 @@ module.exports = {
 		}
 		return false;
 	},
+
+	getUserDirectory() {
+		const { app } = require("electron");
+		return app.getPath("userData");
+	},
 	
 	randomIP(clients) {
 		let ips = Object.keys(clients);
