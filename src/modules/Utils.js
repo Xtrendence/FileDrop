@@ -31,6 +31,15 @@ module.exports = {
 		}
 		return false;
 	},
+
+	portableMode(args) {
+		const fs = require("fs");
+
+		if((!this.empty(args) && args[0] === "portable")) {
+			return true;
+		}
+		return false;
+	},
 	
 	randomIP(clients) {
 		let ips = Object.keys(clients);

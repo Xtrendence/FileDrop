@@ -9,8 +9,8 @@ const ConnectionManager = require("./modules/ConnectionManager");
 const ip = utils.getIP();
 const port = 2180;
 
-// Default: false. Set to true when using Electron Builder to build the app.
-const portable = false;
+// Needs to be set to true when building the Electron app.
+let portable = utils.portableMode(args);
 
 let app;
 if(portable) {
