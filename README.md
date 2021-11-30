@@ -16,7 +16,7 @@ You download the application for the operating system you use from the [Releases
 
 ### How can I host the server without using the Electron app?
 
-Electron apps are big, no arguments there. You can simply download the source code, open a terminal in the same directory as the `package.json` file, run `npm install` followed by `npm start`. 
+Electron apps are big, no arguments there. You can simply download the source code (or ManualServer.zip from the [Releases](https://github.com/Xtrendence/FileDrop/releases) section), open a terminal in the same directory as the `package.json` file, run `npm install` followed by `npm start`. 
 
 ### How does the encryption work?
 
