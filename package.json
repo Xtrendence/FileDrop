@@ -1,6 +1,6 @@
 {
 	"name": "filedrop",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "An encrypted file sharing application that leverages web sockets to allow users to send and receive files.",
 	"main": "src/server.js",
 	"scripts": {
