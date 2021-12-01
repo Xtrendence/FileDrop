@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	};
 
 	let socket = io.connect(`http://${ip}:${port}`);
+	attach(socket);
 
 	let divLoading = document.getElementById("loading-overlay");
 
@@ -308,7 +309,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 				let uploader = new Uploader(socket, from, to, file, encryptionEnabled());
 
-				let reader = new ChunkReader(file, 256 * 100, 0, 0);
+				let chunkSize = detectMobile() ? 1024 * 100 : 256 * 100;
+
+				let reader = new ChunkReader(file, chunkSize, 0, 0);
 				reader.createReader();
 
 				if(encryptionEnabled()) {
@@ -376,309 +379,313 @@ document.addEventListener("DOMContentLoaded", async () => {
 		}
 	});
 
-	socket.on("connect", () => {
-		if(autoLogin === "true" && !empty(savedUsername) && !divLogin.classList.contains("hidden") && !empty(inputUsername.value)) {
-			setTimeout(() => buttonConfirmUsername.click(), 625);
-		} else {
-			setTimeout(() => divLoading.classList.add("hidden"), 750);
-		}
+	function attach(socket) {
+		socket.on("connect", () => {
+			if(autoLogin === "true" && !empty(savedUsername) && !divLogin.classList.contains("hidden") && !empty(inputUsername.value)) {
+				setTimeout(() => buttonConfirmUsername.click(), 625);
+			} else {
+				setTimeout(() => divLoading.classList.add("hidden"), 750);
+			}
 
-		setStatus("Connected");
-	});
-
-	socket.on("disconnect", () => {
-		if(!manualDisconnect) {
-			requiresReconnect = true;
-		}
-
-		setStatus("Disconnected");
-	});
-
-	socket.on("reconnection_attempt", () => {
-		setStatus("Reconnecting");
-	});
-
-	socket.on("reconnect", () => {
-		setStatus("Connected");
-	});
-
-	socket.on("ping", () => {
-		socket.emit("pong");
-	});
-
-	socket.on("set-ip", ip => {
-		localStorage.setItem("ip", ip);
-	});
-
-	socket.on("login", username => {
-		socket.emit("set-key", localStorage.getItem("publicKey"));
-
-		login(username);
-	});
-
-	socket.on("logout", () => {
-		logout();
-	});
-
-	socket.on("kick", () => {
-		showLoading(6000, "Refreshing...");
-
-		localStorage.removeItem("key");
-		localStorage.removeItem("username");
-
-		Notify.error({
-			title: "Kicked By Server",
-			description: "The server has kicked you to protect itself.",
-			duration: 4000
+			setStatus("Connected");
 		});
 
-		setTimeout(() => window.location.reload(), 5000);
-	});
+		socket.on("disconnect", () => {
+			if(!manualDisconnect) {
+				requiresReconnect = true;
+			}
 
-	socket.on("notify", notification => {
-		Notify.info(notification);
-	});
-
-	socket.on("random-username", username => {
-		inputUsername.value = username;
-	});
-
-	socket.on("username-invalid", () => {
-		divLoading.classList.add("hidden");
-
-		Notify.error({
-			title: "Username Invalid",
-			description: "Please only use letters and numbers (16 max)."
+			setStatus("Disconnected");
 		});
-	});
 
-	socket.on("username-taken", () => {
-		divLoading.classList.add("hidden");
-
-		Notify.error({
-			title: "Username Taken",
-			description: "That username isn't available."
+		socket.on("reconnection_attempt", () => {
+			setStatus("Reconnecting");
 		});
-	});
 
-	socket.on("client-list", clients => {
-		console.log(clients);
+		socket.on("reconnect", () => {
+			setStatus("Connected");
+		});
 
-		try {
-			delete clients[localStorage.getItem("ip")];
+		socket.on("ping", () => {
+			socket.emit("pong");
+		});
 
-			Object.keys(clientList).map(existing => {
-				if(existing in clients) {
-					clients[existing]["allowed"] = clientList[existing]["allowed"];
-				}
+		socket.on("set-ip", ip => {
+			localStorage.setItem("ip", ip);
+		});
+
+		socket.on("login", username => {
+			socket.emit("set-key", localStorage.getItem("publicKey"));
+
+			login(username);
+		});
+
+		socket.on("logout", () => {
+			logout();
+		});
+
+		socket.on("kick", () => {
+			showLoading(6000, "Refreshing...");
+
+			localStorage.removeItem("key");
+			localStorage.removeItem("username");
+
+			Notify.error({
+				title: "Kicked By Server",
+				description: "The server has kicked you to protect itself.",
+				duration: 4000
 			});
 
-			clientList = clients;
+			setTimeout(() => window.location.reload(), 5000);
+		});
 
-			divClients.innerHTML = "";
+		socket.on("notify", notification => {
+			Notify.info(notification);
+		});
 
-			let ips = Object.keys(clients);
-			ips.map(ip => {
-				let client = clients[ip];
+		socket.on("random-username", username => {
+			inputUsername.value = username;
+		});
 
-				let div = document.createElement("div");
-				div.id = ip;
-				div.classList.add("client");
-				div.classList.add("noselect");
-				div.innerHTML = `<span class="username">${client.username}</span>`;
-				
-				let button = document.createElement("button");
-				button.classList.add("client-action");
+		socket.on("username-invalid", () => {
+			divLoading.classList.add("hidden");
 
-				let info = document.createElement("button");
-				info.classList.add("client-info");
-				info.innerHTML = `<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1216 1344v128q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h64v-384h-64q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h384q26 0 45 19t19 45v576h64q26 0 45 19t19 45zm-128-1152v192q0 26-19 45t-45 19h-256q-26 0-45-19t-19-45v-192q0-26 19-45t45-19h256q26 0 45 19t19 45z"/></svg>`;
+			Notify.error({
+				title: "Username Invalid",
+				description: "Please only use letters and numbers (16 max)."
+			});
+		});
 
-				if(clientList[ip]["allowed"] === true) {
-					button.textContent = "Send File";
+		socket.on("username-taken", () => {
+			divLoading.classList.add("hidden");
 
-					button.addEventListener("click", () => {
-						showUpload(ip, client.key, client.username);
-					});
-				} else {
-					button.textContent = "Ask Permission";
+			Notify.error({
+				title: "Username Taken",
+				description: "That username isn't available."
+			});
+		});
 
-					button.addEventListener("click", () => {
-						Notify.alert({ 
-							title: "Awaiting Response", 
-							description: "The other client needs to accept your upload request first.", 
-							duration: 6000,
-							color: "var(--main-contrast)",
-							background: "var(--main-third-transparent)"
-						});
+		socket.on("client-list", clients => {
+			console.log(clients);
 
-						socket.emit("ask-permission", { from:localStorage.getItem("ip"), to:ip });
-					});
-				}
+			try {
+				delete clients[localStorage.getItem("ip")];
 
-				let whitelisted = (clientList[ip]["allowed"] === true) ? "Yes" : "No";
-
-				info.addEventListener("click", () => {
-					Notify.info({
-						title: "Client Info", 
-						description: `IP: ${ip}<br>Username: ${client.username}<br>Whitelisted: ${whitelisted}`, 
-						duration: 10000,
-						color: "var(--main-contrast)",
-						background: "var(--main-third-transparent)",
-						html: `<div class="buttons"><button id="${ip}-block" class="decline">Block</button><button id="${ip}-whitelist" class="accept">Whitelist</button></div>`
-					});
-
-					let buttonBlock = document.getElementById(ip + "-block");
-					let buttonWhitelist = document.getElementById(ip + "-whitelist");
-
-					buttonBlock.addEventListener("click", () => {
-						Notify.hideNotification(buttonBlock.parentElement.parentElement.parentElement);
-
-						whitelist[ip] = { allowed:false };
-
-						socket.emit("update-permission", { whitelist:whitelist, response:false, to:ip });
-					});
-
-					buttonWhitelist.addEventListener("click", () => {
-						Notify.hideNotification(buttonWhitelist.parentElement.parentElement.parentElement);
-
-						whitelist[ip] = { allowed:true };
-
-						socket.emit("update-permission", { whitelist:whitelist, response:true, to:ip });
-					});
+				Object.keys(clientList).map(existing => {
+					if(existing in clients) {
+						clients[existing]["allowed"] = clientList[existing]["allowed"];
+					}
 				});
 
-				div.appendChild(info);
-				div.appendChild(button);
+				clientList = clients;
 
-				divClients.appendChild(div);
-			});
-		} catch(error) {
-			console.log(error);
-		}
-	});
+				divClients.innerHTML = "";
 
-	socket.on("ask-permission", from => {
-		if(!(from in whitelist) && from in clientList) {
-			let username = clientList[from].username;
+				let ips = Object.keys(clients);
+				ips.map(ip => {
+					let client = clients[ip];
 
-			Notify.alert({
-				title: "File Request", 
-				description: `${username} (${from}) would like to send you a file.`, 
-				duration: 30000,
-				color: "var(--main-contrast-light)",
-				background: "var(--main-third-transparent)",
-				html: `<div class="buttons"><button id="${from}-decline" class="decline">Decline</button><button id="${from}-accept" class="accept">Accept</button></div>`
-			});
+					let div = document.createElement("div");
+					div.id = ip;
+					div.classList.add("client");
+					div.classList.add("noselect");
+					div.innerHTML = `<span class="username">${client.username}</span>`;
+					
+					let button = document.createElement("button");
+					button.classList.add("client-action");
 
-			let buttonDecline = document.getElementById(from + "-decline");
-			let buttonAccept = document.getElementById(from + "-accept");
+					let info = document.createElement("button");
+					info.classList.add("client-info");
+					info.innerHTML = `<svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1216 1344v128q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h64v-384h-64q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h384q26 0 45 19t19 45v576h64q26 0 45 19t19 45zm-128-1152v192q0 26-19 45t-45 19h-256q-26 0-45-19t-19-45v-192q0-26 19-45t45-19h256q26 0 45 19t19 45z"/></svg>`;
 
-			buttonDecline.addEventListener("click", () => {
-				Notify.hideNotification(buttonDecline.parentElement.parentElement.parentElement);
+					if(clientList[ip]["allowed"] === true) {
+						button.textContent = "Send File";
 
-				whitelist[from] = { allowed:false };
+						button.addEventListener("click", () => {
+							showUpload(ip, client.key, client.username);
+						});
+					} else {
+						button.textContent = "Ask Permission";
 
-				socket.emit("update-permission", { whitelist:whitelist, response:false, to:from });
-			});
+						button.addEventListener("click", () => {
+							Notify.alert({ 
+								title: "Awaiting Response", 
+								description: "The other client needs to accept your upload request first.", 
+								duration: 6000,
+								color: "var(--main-contrast)",
+								background: "var(--main-third-transparent)"
+							});
 
-			buttonAccept.addEventListener("click", () => {
-				Notify.hideNotification(buttonAccept.parentElement.parentElement.parentElement);
+							console.log("Asked");
 
-				whitelist[from] = { allowed:true };
+							socket.emit("ask-permission", { from:localStorage.getItem("ip"), to:ip });
+						});
+					}
 
-				socket.emit("update-permission", { whitelist:whitelist, response:true, to:from });
-			});
-		} else {
-			if(from in whitelist && whitelist[from]["allowed"] === true) {
-				socket.emit("update-permission", { whitelist:whitelist, response:true, to:from });
+					let whitelisted = (clientList[ip]["allowed"] === true) ? "Yes" : "No";
+
+					info.addEventListener("click", () => {
+						Notify.info({
+							title: "Client Info", 
+							description: `IP: ${ip}<br>Username: ${client.username}<br>Whitelisted: ${whitelisted}`, 
+							duration: 10000,
+							color: "var(--main-contrast)",
+							background: "var(--main-third-transparent)",
+							html: `<div class="buttons"><button id="${ip}-block" class="decline">Block</button><button id="${ip}-whitelist" class="accept">Whitelist</button></div>`
+						});
+
+						let buttonBlock = document.getElementById(ip + "-block");
+						let buttonWhitelist = document.getElementById(ip + "-whitelist");
+
+						buttonBlock.addEventListener("click", () => {
+							Notify.hideNotification(buttonBlock.parentElement.parentElement.parentElement);
+
+							whitelist[ip] = { allowed:false };
+
+							socket.emit("update-permission", { whitelist:whitelist, response:false, to:ip });
+						});
+
+						buttonWhitelist.addEventListener("click", () => {
+							Notify.hideNotification(buttonWhitelist.parentElement.parentElement.parentElement);
+
+							whitelist[ip] = { allowed:true };
+
+							socket.emit("update-permission", { whitelist:whitelist, response:true, to:ip });
+						});
+					});
+
+					div.appendChild(info);
+					div.appendChild(button);
+
+					divClients.appendChild(div);
+				});
+			} catch(error) {
+				console.log(error);
 			}
-		}
-	});
+		});
 
-	socket.on("upload", data => {
-		if(data.chunk === 1) {
-			Notify.alert({
-				title: "Receiving File",
-				description: "You are receiving a file... ",
-				color: "var(--accent-contrast)",
-				background: "var(--accent-first-transparent-low)",
-				duration: 999999,
-				html: `<span class="live-span" id="receiving-percentage-${btoa(data.filename)}">0%</span>`
-			});
+		socket.on("ask-permission", from => {
+			if(!(from in whitelist) && from in clientList) {
+				let username = clientList[from].username;
 
-			saver = new FileSaver(localStorage.getItem("privateKey"), data.filename, data.filesize);
-		}
+				Notify.alert({
+					title: "File Request", 
+					description: `${username} (${from}) would like to send you a file.`, 
+					duration: 30000,
+					color: "var(--main-contrast-light)",
+					background: "var(--main-third-transparent)",
+					html: `<div class="buttons"><button id="${from}-decline" class="decline">Decline</button><button id="${from}-accept" class="accept">Accept</button></div>`
+				});
 
-		let percentage = Math.floor((data.offset / saver.fileSize * 100));
-		if(percentage > 100) {
-			percentage = 100;
-		}
+				let buttonDecline = document.getElementById(from + "-decline");
+				let buttonAccept = document.getElementById(from + "-accept");
 
-		let id = "receiving-percentage-" + btoa(saver.fileName);
-		if(document.getElementById(id)) {
-			document.getElementById(id).textContent = percentage + "%";
+				buttonDecline.addEventListener("click", () => {
+					Notify.hideNotification(buttonDecline.parentElement.parentElement.parentElement);
 
-			if(percentage === 100) {
-				Notify.hideNotification(document.getElementById(id).parentElement.parentElement);
+					whitelist[from] = { allowed:false };
+
+					socket.emit("update-permission", { whitelist:whitelist, response:false, to:from });
+				});
+
+				buttonAccept.addEventListener("click", () => {
+					Notify.hideNotification(buttonAccept.parentElement.parentElement.parentElement);
+
+					whitelist[from] = { allowed:true };
+
+					socket.emit("update-permission", { whitelist:whitelist, response:true, to:from });
+				});
+			} else {
+				if(from in whitelist && whitelist[from]["allowed"] === true) {
+					socket.emit("update-permission", { whitelist:whitelist, response:true, to:from });
+				}
 			}
-		}
+		});
 
-		saver.append(data);
-	});
+		socket.on("upload", data => {
+			if(data.chunk === 1) {
+				Notify.alert({
+					title: "Receiving File",
+					description: "You are receiving a file... ",
+					color: "var(--accent-contrast)",
+					background: "var(--accent-first-transparent-low)",
+					duration: 999999,
+					html: `<span class="live-span" id="receiving-percentage-${btoa(data.filename)}">0%</span>`
+				});
 
-	socket.on("uploaded", data => {
-		if(data.cancelled !== true) {
-			saver.save();
-		} else {
-			Notify.success({ 
-				title: "Upload Cancelled", 
-				description: "The upload has been cancelled by the other client.", 
-				duration: 4000,
-				color: "var(--accent-contrast)",
-				background: "var(--accent-third)"
-			});
+				saver = new FileSaver(localStorage.getItem("privateKey"), data.filename, data.filesize);
+			}
+
+			let percentage = Math.floor((data.offset / saver.fileSize * 100));
+			if(percentage > 100) {
+				percentage = 100;
+			}
 
 			let id = "receiving-percentage-" + btoa(saver.fileName);
 			if(document.getElementById(id)) {
-				Notify.hideNotification(document.getElementById(id).parentElement.parentElement);
+				document.getElementById(id).textContent = percentage + "%";
+
+				if(percentage === 100) {
+					Notify.hideNotification(document.getElementById(id).parentElement.parentElement);
+				}
 			}
-		}
-	});
 
-	socket.on("update-permission", data => {
-		if(data.from in clientList) {
-			clientList[data.from]["allowed"] = data.response;
-		}
+			saver.append(data);
+		});
 
-		if(data.response === true) {
-			Notify.success({
-				title: "Request Accepted", 
-				description: "You can now send files to " + clientList[data.from]["username"], 
-				duration: 4000,
-				background: "var(--accent-second)",
-				color: "var(--accent-contrast)"
-			});
-		} else {
-			Notify.error({
-				title: "Request Denied", 
-				description: "You cannot send files to " + clientList[data.from]["username"], 
-				duration: 4000,
-			});
-		}
+		socket.on("uploaded", data => {
+			if(data.cancelled !== true) {
+				saver.save();
+			} else {
+				Notify.success({ 
+					title: "Upload Cancelled", 
+					description: "The upload has been cancelled by the other client.", 
+					duration: 4000,
+					color: "var(--accent-contrast)",
+					background: "var(--accent-third)"
+				});
+
+				let id = "receiving-percentage-" + btoa(saver.fileName);
+				if(document.getElementById(id)) {
+					Notify.hideNotification(document.getElementById(id).parentElement.parentElement);
+				}
+			}
+		});
+
+		socket.on("update-permission", data => {
+			if(data.from in clientList) {
+				clientList[data.from]["allowed"] = data.response;
+			}
+
+			if(data.response === true) {
+				Notify.success({
+					title: "Request Accepted", 
+					description: "You can now send files to " + clientList[data.from]["username"], 
+					duration: 4000,
+					background: "var(--accent-second)",
+					color: "var(--accent-contrast)"
+				});
+			} else {
+				Notify.error({
+					title: "Request Denied", 
+					description: "You cannot send files to " + clientList[data.from]["username"], 
+					duration: 4000,
+				});
+			}
+			
+			socket.emit("get-clients");
+		});
+
+		socket.on("set-color", colors => {
+			let gradientStopKeys = Object.keys(gradientStops);
 		
-		socket.emit("get-clients");
-	});
+			for(let i = 0; i < gradientStopKeys.length; i++) {
+				gradientStops[gradientStopKeys[i]].setAttribute("stop-color", colors[i]);
+			}
 
-	socket.on("set-color", colors => {
-		let gradientStopKeys = Object.keys(gradientStops);
-	
-		for(let i = 0; i < gradientStopKeys.length; i++) {
-			gradientStops[gradientStopKeys[i]].setAttribute("stop-color", colors[i]);
-		}
-
-		svgBackground.style.background = colors[2];
-	});
+			svgBackground.style.background = colors[2];
+		});
+	}
 
 	function serverConnected() {
 		return buttonServer.classList.contains("active");
@@ -814,6 +821,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 	}
 
 	function logout() {
+		socket = io.connect(`http://${ip}:${port}`);
+		attach(socket);
+		
 		buttonServer.classList.remove("logged-in");
 
 		localStorage.removeItem("username");
@@ -824,8 +834,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 		divLogin.style.zIndex = 1;
 		divLogin.classList.remove("hidden");
-
-		setStatus("Connected");
 
 		setTimeout(() => {
 			divApp.removeAttribute("style");
