@@ -1,6 +1,6 @@
 const utils = require("./modules/Utils");
 const ip = utils.getIP();
-const port = 2180;
+const port = 3180;
 
 const express = require("express");
 const cors = require("cors");
@@ -14,7 +14,7 @@ app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use(cors());
 
 app.get("/", (request, response) => {
-	response.render("index", { ip:ip, port:port });
+	response.render("index");
 });
 
 app.get("/forge/prime.worker.js", (request, response) => {

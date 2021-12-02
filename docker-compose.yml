@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+    filedrop:
+        build: .
+        container_name: filedrop
+        restart: unless-stopped
+        ports:
+            - 3180:3180
+        extra_hosts:
+            - "host.docker.internal:host-gateway"

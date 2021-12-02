@@ -7,7 +7,7 @@ const DBManager = require("./modules/DBManager");
 const ConnectionManager = require("./modules/ConnectionManager");
 
 const ip = utils.getIP();
-const port = 2180;
+const port = 3180;
 
 // Needs to be set to true when building the Electron app.
 let portable = utils.portableMode(args);
@@ -39,7 +39,7 @@ const connectionManager = new ConnectionManager(io, dbManager, 64, 5000);
 io.on("connection", socket => {
 	socket.handshake.address = utils.IPv4(socket.handshake.address);
 
-	if(utils.testingMode(args)) {
+	if(utils.testingMode(args) || utils.hasDockerEnvironment() || utils.hasDockerGroup()) {
 		socket.handshake.address = utils.randomIP(connectionManager.clients);
 	}
 
@@ -83,4 +83,4 @@ io.on("connection", socket => {
 	}
 });
 
-console.log("\x1b[35m", `Started ${mode} Server: `, "\x1b[4m", "http://" + ip + ":" + server.address().port, "\x1b[0m");
+console.log("\x1b[35m", `Started ${mode} Server: `, "\x1b[4m", "http://" + ip + ":" + port, "\x1b[0m");

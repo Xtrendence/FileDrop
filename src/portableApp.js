@@ -1,6 +1,6 @@
 const utils = require("./modules/Utils");
 const ip = utils.getIP();
-const port = 2180;
+const port = 3180;
 
 const electron = require("electron");
 const localShortcut = require("electron-localshortcut");
@@ -77,7 +77,7 @@ app.on("ready", () => {
 	}
 
 	portableApp.get("/", (request, response) => {
-		response.render("index", { ip:ip, port:port });
+		response.render("index");
 	});
 
 	portableApp.get("/portable", (request, response) => {

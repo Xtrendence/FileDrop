@@ -11,7 +11,7 @@ const Client = require("socket.io-client");
 const fs = require("fs");
 
 const ip = utils.getIP();
-const port = 2180;
+const port = 3180;
 
 const app = require("../src/app");
 

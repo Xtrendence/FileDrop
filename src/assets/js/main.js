@@ -37,8 +37,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 		body.id = "desktop";
 	}
 
-	let ip = document.getElementById("span-ip").textContent;
-	let port = document.getElementById("span-port").textContent;
+	let ip = getIP();
+	let port = getPort();
+	let url = `${getProtocol()}//${ip}:${port}`;
 
 	let gradientStops = {
 		stop1: document.getElementById("stop-1"),
@@ -46,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 		stop3: document.getElementById("stop-3")
 	};
 
-	let socket = io.connect(`http://${ip}:${port}`);
+	let socket = io.connect(url);
 	attach(socket);
 
 	let divLoading = document.getElementById("loading-overlay");
@@ -821,7 +822,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	}
 
 	function logout() {
-		socket = io.connect(`http://${ip}:${port}`);
+		socket = io.connect(url);
 		attach(socket);
 		
 		buttonServer.classList.remove("logged-in");

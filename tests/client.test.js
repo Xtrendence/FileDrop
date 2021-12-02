@@ -24,12 +24,12 @@ describe("Client Testing", () => {
 		page1 = await browser1.newPage();
 		page2 = await browser2.newPage();
 
-		await page1.goto(`http://${utils.getIP()}:2180`);
-		await page2.goto(`http://${utils.getIP()}:2180`);
+		await page1.goto(`http://${utils.getIP()}:3180`);
+		await page2.goto(`http://${utils.getIP()}:3180`);
 	});
 
 	afterAll(async () => {
-		exec("kill $(lsof -t -i:2180)");
+		exec("kill $(lsof -t -i:3180)");
 
 		await new Promise((resolve) => setTimeout(resolve, 4000));
 

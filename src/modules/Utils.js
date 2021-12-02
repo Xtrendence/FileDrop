@@ -25,6 +25,23 @@ module.exports = {
 		return ip.replace("::ffff:", "");
 	},
 
+	hasDockerEnvironment() {
+		try {
+			require("fs").statSync("/.dockerenv");
+			return true;
+		} catch {
+			return false;
+		}
+	},
+
+	hasDockerGroup() {
+		try {
+			return require("fs").readFileSync("/proc/self/cgroup", "utf8").includes("docker");
+		} catch {
+			return false;
+		}
+	},
+
 	testingMode(args) {
 		if(!this.empty(args) && args[0] === "testing") {
 			return true;
