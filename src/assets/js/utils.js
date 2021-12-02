@@ -9,19 +9,19 @@ function empty(value) {
 }
 
 function getIP() {
-	let url = window.location.href;
-	let port = getPort();
-	let ip = url.replace(`:${port}/`, "");
-	return ip.replace(`${getProtocol()}//`, "");
+	return window.location.hostname;
 }
 
 function getPort() {
-	let url = window.location.href;
-	let port = url.split(":")[2].replace("/", "");
+	let port = window.location.port;
+
+	if(empty(port)) {
+		port = getProtocol() === "https:" ? 443 : 80;
+	}
+
 	return port;
 }
 
 function getProtocol() {
-	let url = window.location.href;
-	return url.split("//")[0];
+	return window.location.protocol;
 }
