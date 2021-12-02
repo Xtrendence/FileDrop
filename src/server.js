@@ -39,8 +39,12 @@ const connectionManager = new ConnectionManager(io, dbManager, 64, 5000);
 io.on("connection", socket => {
 	socket.handshake.address = utils.IPv4(socket.handshake.address);
 
-	if(utils.testingMode(args) || utils.hasDockerEnvironment() || utils.hasDockerGroup()) {
+	if(utils.testingMode(args)) {
 		socket.handshake.address = utils.randomIP(connectionManager.clients);
+	}
+
+	if(utils.hasDockerEnvironment() || utils.hasDockerGroup()) {
+		socket.handshake.address = utils.getClientIP(connectionManager.clients, socket);
 	}
 
 	let address = socket.handshake.address;

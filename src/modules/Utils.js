@@ -21,6 +21,36 @@ module.exports = {
 		return ip;
 	},
 
+	getClientIP(clients, socket) {
+		try {
+			let ip;
+
+			if("handshake" in socket && "headers" in socket.handshake && !this.empty(socket.handshake.headers["x-forwarded-for"])) {
+				ip = socket.handshake.headers["x-forwarded-for"];
+			}
+
+			if("request" in socket && "headers" in socket.request && !this.empty(socket.request.headers["x-forwarded-for"])) {
+				ip = socket.request.headers["x-forwarded-for"];
+			}
+
+			if("handshake" in socket && "headers" in socket.handshake && !this.empty(socket.handshake.headers["X-Forwarded-For"])) {
+				ip = socket.handshake.headers["X-Forwarded-For"];
+			}
+
+			if("request" in socket && "headers" in socket.request && !this.empty(socket.request.headers["X-Forwarded-For"])) {
+				ip = socket.request.headers["X-Forwarded-For"];
+			}
+
+			if(this.empty(ip) || (ip in clients)) {
+				ip = this.randomIP(clients);
+			}
+
+			return ip;
+		} catch(error) {
+			console.log(error);
+		}
+	},
+
 	IPv4(ip) {
 		return ip.replace("::ffff:", "");
 	},
