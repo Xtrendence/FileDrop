@@ -26,15 +26,13 @@
 		"asar": false,
 		"mac": {
 			"target": [
-				"dmg",
-				"zip"
+				"dmg"
 			],
 			"artifactName": "FileDrop.${version}.Mac.${ext}"
 		},
 		"win": {
 			"target": [
-				"nsis",
-				"zip"
+				"nsis"
 			],
 			"artifactName": "FileDrop.${version}.Windows.${ext}",
 			"icon": "build/icon.ico"
