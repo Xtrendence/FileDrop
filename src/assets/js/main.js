@@ -290,7 +290,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 					publicKey = clientList[to]["key"];
 				}
 
-				if(empty(inputFile.value) || inputFile.files.length === 0 || empty(publicKey) || empty(from) || empty(to)) {
+				if(empty(inputFile.value) || inputFile.files.length === 0) {
+					divUploadArea.click();
+					return;
+				}
+
+				if(empty(publicKey) || empty(from) || empty(to)) {
 					return;
 				}
 
