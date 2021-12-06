@@ -31,7 +31,7 @@
 			"target": [
 				"dmg"
 			],
-			"artifactName": "FileDrop.${version}.${arch}.Mac.${ext}"
+			"artifactName": "FileDrop.${version}.Mac.${arch}.${ext}"
 		},
 		"win": {
 			"target": [
