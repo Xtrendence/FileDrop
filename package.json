@@ -12,7 +12,7 @@
 		"start": "node src/server.js",
 		"dev": "nodemon src/server.js",
 		"dist": "sudo electron-builder -mwl",
-		"dist-macos": "sudo electron-builder -m",
+		"dist-macos": "sudo electron-builder -m --x64 --arm64",
 		"dist-windows": "electron-builder -w",
 		"dist-linux": "sudo electron-builder -l",
 		"electron-start": "electron src/server.js portable",
@@ -31,7 +31,7 @@
 			"target": [
 				"dmg"
 			],
-			"artifactName": "FileDrop.${version}.Mac.${ext}"
+			"artifactName": "FileDrop.${version}.${arch}.Mac.${ext}"
 		},
 		"win": {
 			"target": [
