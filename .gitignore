@@ -3,3 +3,4 @@ db
 testDB
 dist
 coverage
+*.DS_Store
