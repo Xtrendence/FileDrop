@@ -80,11 +80,15 @@ module.exports = {
 	},
 
 	portableMode(args) {
+		const path = require("path");
 		const fs = require("fs");
 
-		if((!this.empty(args) && args[0] === "portable")) {
+		let portableFile = path.join(__dirname, "../portable");
+
+		if((!this.empty(args) && args[0] === "portable") || fs.existsSync(portableFile)) {
 			return true;
 		}
+
 		return false;
 	},
 

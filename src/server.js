@@ -9,7 +9,6 @@ const ConnectionManager = require("./modules/ConnectionManager");
 const ip = utils.getIP();
 const port = 3180;
 
-// Needs to be set to true when building the Electron app.
 let portable = utils.portableMode(args);
 
 let app, db;
