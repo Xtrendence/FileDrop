@@ -1,6 +1,6 @@
 {
 	"name": "filedrop",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "An encrypted file sharing application that leverages web sockets to allow users to send and receive files.",
 	"main": "src/server.js",
 	"scripts": {
@@ -11,10 +11,11 @@
 		"test-server": "jest tests/server.test.js --verbose",
 		"start": "node src/server.js",
 		"dev": "nodemon src/server.js",
-		"dist": "touch src/portable && sudo electron-builder -mwl && rm src/portable",
+		"dist": "touch src/portable && sudo electron-builder -mwl && rm src/portable && npm run dist-manual",
 		"dist-macos": "touch src/portable && sudo electron-builder -m --x64 --arm64 && rm src/portable",
 		"dist-windows": "copy NUL > src\\portable && electron-builder -w && del src\\portable",
 		"dist-linux": "touch src/portable && sudo electron-builder -l && rm src/portable",
+		"dist-manual": "mkdir dist && zip -9 -r dist/ManualServer.zip src package.json package-lock.json README.md LICENSE.md jsconfig.json Dockerfile docker-compose.yml",
 		"electron-start": "electron src/server.js portable",
 		"electron-dev": "nodemon --exec electron src/server.js portable"
 	},
