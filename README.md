@@ -2,6 +2,10 @@
 
 ![Banner](./src/assets/img/Banner.png)
 
+![Downloads](https://www.xtrendence.dev/scripts/filedrop-stats.php?svg=true&custom=true)
+
+*Based on GitHub Release downloads and DockerHub pulls.*
+
 ### Disclaimer
 
 This was made as the coursework for my COMP3006 university module. Pull requests and major changes cannot be made until I receive a grade for this project to avoid plagiarism issues. The requirements were to develop a responsive and interactive web application that uses web sockets, Node.js, and PouchDB or MongoDB as its server-side database.
