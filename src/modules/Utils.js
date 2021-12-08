@@ -1,4 +1,8 @@
 module.exports = {
+	/**
+	 * Gets the local IP address of the server.
+	 * @returns {string} - The server's IP address.
+	 */
 	getIP() {
 		const { networkInterfaces } = require("os");
 
@@ -21,6 +25,12 @@ module.exports = {
 		return ip;
 	},
 
+	/**
+	 * Gets the IP address of a client based on the X-Forwarded-For header value. If the header is not found or is empty, a random IP is assigned to the client.
+	 * @param {Object} clients - The list of clients connected to the server.
+	 * @param {Socket} socket - The socket to get the IP address from.
+	 * @returns {string} - The IP address of the client.
+	 */
 	getClientIP(clients, socket) {
 		try {
 			let ip;
@@ -51,10 +61,19 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * If an IPv4 address is in the format of an IPv6 one, it's converted to the standard IPv4 format.
+	 * @param {string} ip - The IP address to convert.
+	 * @returns {string} - The converted IPv4 address.
+	 */
 	IPv4(ip) {
 		return ip.replace("::ffff:", "");
 	},
 
+	/**
+	 * Check if a Docker environment file exists.
+	 * @returns {Boolean}
+	 */
 	hasDockerEnvironment() {
 		try {
 			require("fs").statSync("/.dockerenv");
@@ -64,6 +83,10 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Check if the control group file contains the word "docker".
+	 * @returns {Boolean}
+	 */
 	hasDockerGroup() {
 		try {
 			return require("fs").readFileSync("/proc/self/cgroup", "utf8").includes("docker");
@@ -72,6 +95,11 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Check if the arguments passed to the script contain "testing" as an argument.
+	 * @param {Array} args - An array of arguments.
+	 * @returns {Boolean}
+	 */
 	testingMode(args) {
 		if(!this.empty(args) && args[0] === "testing") {
 			return true;
@@ -79,6 +107,11 @@ module.exports = {
 		return false;
 	},
 
+	/**
+	 * Check if a file called "portable" exists in the root directory of the application, or if "portable" is an argument passed to the script.
+	 * @param {Array} args - An array of arguments.
+	 * @returns {Boolean}
+	 */
 	portableMode(args) {
 		const path = require("path");
 		const fs = require("fs");
@@ -92,11 +125,20 @@ module.exports = {
 		return false;
 	},
 
+	/**
+	 * Get the path to the user data directory.
+	 * @returns {string} - The path to the user data directory.
+	 */
 	getUserDirectory() {
 		const { app } = require("electron");
 		return app.getPath("userData");
 	},
 	
+	/**
+	 * Generates and returns a random and available IPv4 address.
+	 * @param {Object} clients - The list of connected clients.
+	 * @returns {string} - The randomly generated IP address.
+	 */
 	randomIP(clients) {
 		let ips = Object.keys(clients);
 		let ip = "192.168.1." + this.randomBetween(64, 256);
@@ -108,6 +150,11 @@ module.exports = {
 		return ip;
 	},
 
+	/**
+	 * Checks if a username is valid.
+	 * @param {string} username - The username to check.
+	 * @returns {Boolean}
+	 */
 	validUsername(username) {
 		try {
 			if(username.length > 16) {
@@ -121,6 +168,11 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Ensures a string cannot be used as part of an XSS attack.
+	 * @param {string} string - Check if a string contains opening or closing HTML tags.
+	 * @returns {Boolean}
+	 */
 	xssValid(string) {
 		try {
 			if(string.includes("<") || string.includes(">")) {
@@ -132,6 +184,11 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Generate a random and available username from a list of 64 words.
+	 * @param {Object} clients - A list of clients.
+	 * @returns {string} - The randomly generated username.
+	 */
 	getUsername(clients) {
 		let words = require("./Words");
 		let available = Object.keys(words);
@@ -151,6 +208,12 @@ module.exports = {
 		return words[available[random]];
 	},
 
+	/**
+	 * Generate a random and available array of colors from a list of 64 arrays.
+	 * @param {string} address - The IP address of the client.
+	 * @param {Object} clients - A list of clients.
+	 * @returns {Object} - An object containing the array of colors and its index.
+	 */
 	getColor(address, clients) {
 		let colors = require("./Colors");
 		let available = Object.keys(colors);
@@ -172,18 +235,39 @@ module.exports = {
 		return { colors:colors[available[random]], index:available[random] };
 	},
 
+	/**
+	 * Generates a random number within a given range.
+	 * @param {Number} min - The smallest possible number.
+	 * @param {Number} max - The largest possible number.
+	 * @returns {Number} - The random number within the given range.
+	 */
 	randomBetween(min, max) {
 		return min + Math.floor(Math.random() * (max - min + 1));
 	},
 
+	/**
+	 * Remove a key from an object without modifying the original object.
+	 * @param {string} key - The key to remove.
+	 * @param {Object} {} - The object to remove the key from.
+	 * @returns {Object} - The object with the key removed.
+	 */
 	removeKey(key, {[key]: _, ...rest}) {
 		return rest;
 	},
 
+	/**
+	 * Get the current UNIX timestamp (in seconds).
+	 * @returns {Number} - Current UNIX timestamp.
+	 */
 	epoch() {
 		return Math.floor(new Date().getTime() / 1000);
 	},
 
+	/**
+	 * Checks to see if a value is empty.
+	 * @param {any} value - A value to check and see if it's empty.
+	 * @returns {Boolean}
+	 */
 	empty(value) {
 		if(typeof value === "object" && value !== null && Object.keys(value).length === 0) {
 			return true;
