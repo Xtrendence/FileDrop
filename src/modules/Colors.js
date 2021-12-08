@@ -1,3 +1,4 @@
+// The colors used to randomly and visually differentiate clients.
 const gradientColors = { 
 	0: [
 		"rgb(192,37,130)", 

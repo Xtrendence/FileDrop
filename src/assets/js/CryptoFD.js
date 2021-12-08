@@ -1,8 +1,20 @@
+/**
+ * A class with static methods to simplify the use of cryptographic functions throughout the application.
+ */
 class CryptoFD {
+	/**
+	 * @param {ArrayBuffer} data - The file data as an ArrayBuffer.
+	 * @returns {string} - An encoded string version of the file data.
+	 */
 	static encode(data) {
 		return String.fromCharCode.apply(null, new Uint8Array(data));
 	}
 
+	/**
+	 * @param {string} plaintext - The string to encrypt.
+	 * @param {string} password - The encryption password.
+	 * @returns {string} - The ciphertext.
+	 */
 	static encryptAES(plaintext, password) {
 		let encrypted = CryptoJS.AES.encrypt(plaintext, password, { 
 			mode: CryptoJS.mode.CFB,
@@ -12,6 +24,11 @@ class CryptoFD {
 		return encrypted.toString();
 	}
 
+	/**
+	 * @param {string} ciphertext - The string to decrypt.
+	 * @param {string} password - The decryption password.
+	 * @returns {string} - The plaintext.
+	 */
 	static decryptAES(ciphertext, password) {
 		let decrypted = CryptoJS.AES.decrypt(ciphertext, password, {
 			mode: CryptoJS.mode.CFB,
@@ -21,6 +38,11 @@ class CryptoFD {
 		return decrypted.toString(CryptoJS.enc.Utf8);
 	}
 
+	/**
+	 * @param {string} plaintext - The string to encrypt.
+	 * @param {string} publicKey - The public RSA key to encrypt the data with.
+	 * @returns {string} - A Base64 encoded version of the ciphertext.
+	 */
 	static encryptRSA(plaintext, publicKey) {
 		return new Promise((resolve) => {
 			publicKey = forge.pki.publicKeyFromPem(publicKey);
@@ -28,6 +50,11 @@ class CryptoFD {
 		});
 	}
 
+	/**
+	 * @param {string} ciphertext - The string to decrypt.
+	 * @param {string} privateKey - The private RSA key to decrypt the data with.
+	 * @returns {string} - The plaintext.
+	 */
 	static decryptRSA(ciphertext, privateKey) {
 		return new Promise((resolve) => {
 			privateKey = forge.pki.privateKeyFromPem(privateKey);
@@ -35,6 +62,10 @@ class CryptoFD {
 		});
 	}
 
+	/**
+	 * Generates a random password, and a cryptographically random salt, from which a 256-bit AES key is derived.
+	 * @returns {string} - The AES key.
+	 */
 	static generateAESKey() {
 		let result = "";
 		let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -49,6 +80,10 @@ class CryptoFD {
 		return CryptoJS.PBKDF2(result, salt, { keySize: 256/32 }).toString(CryptoJS.enc.Base64);
 	}
 
+	/**
+	 * Generate a public and private RSA key pair.
+	 * @returns {Object} - An object containing both the public and private key.
+	 */
 	static generateRSAKeys() {
 		let rsa = forge.pki.rsa;
 

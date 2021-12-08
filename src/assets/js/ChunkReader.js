@@ -1,4 +1,15 @@
+/**
+ * A class that acts similarly to the FileReader, but reads data in chunks of ArrayBuffers.
+ */
 class ChunkReader {
+	/**
+	 * @param {Object} file - The file to read.
+	 * @param {Number} chunkSize - The size of each chunk.
+	 * @param {Number} currentChunk - The number of the current chunk being read.
+	 * @param {Number} offset - Where in the file to start reading chunks from.
+	 * @returns {void}
+	 * @constructor
+	 */
 	constructor(file, chunkSize = 256 * 100, currentChunk = 0, offset = 0) {
 		this.encryption = false;
 		this.file = file;
@@ -9,6 +20,10 @@ class ChunkReader {
 		this.stop = false;
 	}
 
+	/**
+	 * Creates a new FileReader instance, and sets the "onload" property which listens to the FileReader's load event as each chunk is read. If encryption is enabled, then the data is encrypted. The "chunkData" and "done" event listeners are used to pass the data back.
+	 * @returns {void}
+	 */
 	createReader() {
 		this.reader = new FileReader();
 
@@ -46,18 +61,37 @@ class ChunkReader {
 		};
 	}
 
+	/**
+	 * Checks if an event exists.
+	 * @param {string} event - The name of the event.
+	 * @returns {Boolean}
+	 */
 	hasEvent(event) {
 		return Object.keys(this.events).includes(event);
 	}
 
+	/**
+	 * Adds an event listener.
+	 * @param {string} event - The name of the event.
+	 * @returns {void}
+	 */
 	on(event, callback) {
 		this.events[event] = callback;
 	}
 
+	/**
+	 * Removes an event listener.
+	 * @param {string} event - The name of the event.
+	 * @returns {void}
+	 */
 	off(event) {
 		delete this.events[event];
 	}
 
+	/**
+	 * Reads the next chunk from the specified file, and returns a progress update using the "nextChunk" event if it exists.
+	 * @returns {void}
+	 */
 	nextChunk() {
 		if(!this.stop) {
 			this.currentChunk++;
@@ -79,12 +113,21 @@ class ChunkReader {
 		}
 	}
 
+	/**
+	 * Generates a random AES key, and encrypts it with the recipient's public RSA key.
+	 * @param {string} publicKey - The public key of the user that's going to receive the file.
+	 * @returns {void}
+	 */
 	async encryptChunks(publicKey) {
 		this.encryption = true;
 		this.key = CryptoFD.generateAESKey();
 		this.encryptedKey = await CryptoFD.encryptRSA(this.key, publicKey);
 	}
 
+	/**
+	 * Stops reading from the file and cancels the operation.
+	 * @returns {void}
+	 */
 	destroy() {
 		this.stop = true;
 		this.reader = null;

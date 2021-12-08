@@ -1,5 +1,5 @@
+// Imports.
 const utils = require("./modules/Utils");
-const ip = utils.getIP();
 const port = 3180;
 
 const electron = require("electron");
@@ -11,19 +11,28 @@ const cors = require("cors");
 const path = require("path");
 const portableApp = express();
 
+// Use EJS.
 portableApp.set("views", path.join(__dirname, "views"));
 portableApp.set("view engine", "ejs");
 portableApp.use("/assets", express.static(path.join(__dirname, "assets")));
 
+// Use CORS.
 portableApp.use(cors());
 
+// Since a port cannot be used by two instances of FileDrop, the application is limited to one instance.
 app.requestSingleInstanceLock();
+
+// Hardware acceleration is disabled as it's not required. This also improves compatibility on some platforms.
 app.disableHardwareAcceleration();
+
+// Set the name of the Electron application.
 app.name = "FileDrop Server";
 
 app.on("ready", () => {
+	// Used to automatically show the developer console.
 	const debugMode = false;
 
+	// The window width and height.
 	let windowWidth = 240;
 	let windowHeight = 210;
 
@@ -31,6 +40,7 @@ app.on("ready", () => {
 		windowWidth += 220;
 	}
 
+	// The Electron browser window.
 	const window = new BrowserWindow({
 		width: windowWidth,
 		height: windowHeight,
@@ -49,6 +59,7 @@ app.on("ready", () => {
 		}
 	});
 
+	// Closing applications is handled differently in macOS (apps are kept open and are only hidden unless explicitly quit).
 	if(process.platform === "darwin") {
 		let quit = true;
 
@@ -93,6 +104,7 @@ app.on("ready", () => {
 		response.sendFile(path.join(__dirname, "./assets/js/prime.worker.min.js"));
 	});
 
+	// Allows the user to open the application in their browser by clicking a button on the front-end.
 	ipcMain.on("open-link", (error, request) => {
 		try {
 			shell.openExternal("http://" + request.toString());
@@ -105,6 +117,7 @@ app.on("ready", () => {
 		app.quit();
 	});
 
+	// Used for the functionality of the custom frame/title bar.
 	ipcMain.on("set-window-state", (error, request) => {
 		let state = request.toString();
 

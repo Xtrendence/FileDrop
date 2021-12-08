@@ -1,3 +1,4 @@
+// Words used as random usernames for clients.
 const words = {
 	0: "Strawberry",
 	1: "Muffin",

@@ -9,22 +9,31 @@ document.addEventListener("DOMContentLoaded", () => {
 	let buttonOpen = document.getElementById("open-button");
 	let buttonStop = document.getElementById("stop-button");
 
+	// Open the application in the browser.
 	buttonOpen.addEventListener("click", () => {
 		ipcRenderer.send("open-link", spanAddress.textContent);
 	});
 
+	// Quit the application.
 	buttonStop.addEventListener("click", () => {
 		ipcRenderer.send("quit");
 	});
 
+	// If on macOS, hide the application. Otherwise, quit it.
 	buttonClose.addEventListener("click", () => {
 		setWindowState("closed");
 	});
 
+	// Minimize the application.
 	buttonMinimize.addEventListener("click", () => {
 		setWindowState("minimized");
 	});
 
+	/**
+	 * Set the state of the application window.
+	 * @param {string} state - The state of the application window.
+	 * @returns {void}
+	 */
 	function setWindowState(state) {
 		ipcRenderer.send("set-window-state", state);
 	}
