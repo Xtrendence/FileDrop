@@ -1,0 +1,240 @@
+<!-- This is just the promotional page for FileDrop, you don't need to host this file. -->
+<!DOCTYPE html>
+<html class="dark">
+	<head>
+		<link rel="apple-touch-icon" sizes="180x180" href="./src/assets/img/favicon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="./src/assets/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="./src/assets/img/favicon/favicon-16x16.png">
+		<link rel="manifest" href="./src/assets/img/favicon/site.webmanifest">
+		<link rel="mask-icon" href="./src/assets/img/favicon/safari-pinned-tab.svg" color="#42b1e3">
+		<link rel="shortcut icon" href="./src/assets/img/favicon/favicon.ico">
+		<link rel="stylesheet" href="./src/assets/css/dark.css">
+		<meta name="msapplication-TileColor" content="#2d89ef">
+		<meta name="msapplication-config" content="./src/assets/img/favicon/browserconfig.xml">
+		<meta name="theme-color" content="#ffffff">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<meta charset="utf-8">
+		<title>FileDrop</title>
+		<style>
+			::-webkit-scrollbar {
+				display:block;
+				width:6px;
+				background:rgba(0,200,255,0);
+			}
+			::-webkit-scrollbar-thumb {
+				border-radius:20px;
+				background:rgb(148, 135, 207);
+			}
+			::-webkit-scrollbar-thumb:hover {
+				background:rgb(143, 125, 223);
+			}
+			::-webkit-scrollbar-track { 
+				background:rgb(85, 73, 139);
+			}
+			::selection {
+				background:rgb(89, 75, 150);
+			}
+			html {
+				height:100%;
+				font-family:var(--font-family);
+			}
+			body {
+				background:var(--purple-gradient);
+				background-attachment:fixed;
+				margin:0;
+			}
+			.hidden {
+				display:none;
+				visibility:hidden;
+				position:absolute;
+				z-index:-1;
+			}
+			.noselect {
+				-webkit-user-select:none;
+				-khtml-user-select:none;
+				-moz-user-select:none;
+				-ms-user-select:none;
+				user-select:none;
+				outline:none;
+			}
+			.icon-wrapper, .details-wrapper {
+				background:var(--main-first-transparent);
+				border-radius:var(--border-radius);
+				box-shadow:var(--shadow-smooth);
+				padding:20px;
+				margin:20px auto 10px auto;;
+				width:300px;
+				display:block;
+				text-align:center;
+			}
+			.icon-wrapper {
+				width:100px;
+			}
+			.app-icon {
+				width:100%;
+			}
+			.title-wrapper {
+				background:var(--main-first-transparent);
+				border-radius:var(--border-radius);
+				box-shadow:var(--shadow-smooth);
+				padding:20px;
+				margin:20px auto 0 auto;;
+				width:300px;
+				display:block;
+				text-align:center;
+			}
+			.title-wrapper .title {
+				margin:0;
+			}
+			.platform-wrapper {
+				font-size:0;
+			}
+			.details-wrapper .platform-wrapper a {
+				width:calc(50% - 10px);
+				height:140px;
+				transition:transform 0.25s;
+				display:inline-block;
+				text-decoration:none;
+			}
+			.releases .platform-wrapper {
+				transition:transform 0.25s;
+			}
+			.releases:hover .platform-wrapper {
+				transform:scale(0.95);
+			}
+			.button-wrapper {
+				background:var(--purple-gradient);
+				width:100%;
+				height:100%;
+				border-radius:50%;
+			}
+			.details-wrapper .platform-wrapper a:hover {
+				transform:scale(0.95);
+			}
+			.details-wrapper .platform-wrapper a:first-of-type {
+				margin-right:20px;
+			}
+			.button-wrapper .platform-icon {
+				width:80%;
+				margin-top:10%;
+			}
+			.platform-icon {
+				width:calc(100% / 3);
+			}
+			.images-wrapper {
+				font-size:0;
+				text-align:center;
+				padding-bottom:20px;
+			}
+			.image-wrapper {
+				vertical-align:middle;
+				display:inline-block;
+				padding:20px;
+				margin:20px 20px 0 20px;
+				background:var(--main-first-transparent);
+				border-radius:var(--border-radius);
+				box-shadow:var(--shadow-smooth);
+				width:calc(100% / 3 - 80px);
+				height:300px;
+				overflow:hidden;
+			}
+			.device-image {
+				max-width:calc(100% - 20px);
+				height:calc(100% - 60px);
+			}
+			.title, .image-wrapper span {
+				font-size:18px;
+				display:block;
+				font-weight:bold;
+				color:var(--main-contrast);
+				margin:20px auto 0 auto;
+			}
+			@media screen and (max-width:1350px) {
+				.image-wrapper {
+					width:calc(100% / 2 - 80px);
+				}
+			}
+			@media screen and (max-width:980px) {
+				.image-wrapper {
+					display:block;
+					margin:20px auto 20px auto;
+					width:400px;
+				}
+			}
+			@media screen and (max-width:500px) {
+				.image-wrapper {
+					display:block;
+					margin:20px auto 0 auto;
+					width:calc(100% - 80px);
+					height:auto;
+				}
+				.device-image {
+					width:90%;
+					height:auto;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="title-wrapper noselect">
+			<span class="title">FileDrop</span>
+		</div>
+		<div class="icon-wrapper noselect">
+			<img class="app-icon" src="./src/assets/img/Icon.png" draggable="false">
+		</div>
+		<div class="title-wrapper noselect">
+			<span class="title">Download</span>
+		</div>
+		<div class="details-wrapper noselect">
+			<div class="platform-wrapper">
+				<a href="https://www.github.com/Xtrendence/FileDrop">
+					<div class="button-wrapper">
+						<img class="platform-icon github" src="./promotional-assets/GitHub.png" draggable="false">
+					</div>
+				</a>
+				<a href="https://hub.docker.com/r/xtrendence/filedrop">
+					<div class="button-wrapper">
+						<img class="platform-icon dockerhub" src="./promotional-assets/DockerHub.png" draggable="false">
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="title-wrapper noselect">
+			<span class="title">Cross-Platform</span>
+		</div>
+		<div class="details-wrapper noselect">
+			<a href="https://github.com/Xtrendence/FileDrop/releases" class="releases">
+				<div class="platform-wrapper">
+					<img class="platform-icon macos" src="./promotional-assets/macOS.png" draggable="false">
+					<img class="platform-icon linux" src="./promotional-assets/Linux.png" draggable="false">
+					<img class="platform-icon windows" src="./promotional-assets/Windows.png" draggable="false">
+				</div>
+			</a>
+		</div>
+		<div class="title-wrapper noselect">
+			<span class="title">Send Files Across Any Device</span>
+		</div>
+		<div class="images-wrapper noselect">
+			<div class="image-wrapper">
+				<img class="device-image laptop-login" src="./promotional-assets/Laptop-Login.png" draggable="false">
+				<span>Laptop (Login)</span>
+			</div>
+			<div class="image-wrapper">
+				<img class="device-image desktop" src="./promotional-assets/Desktop.png" draggable="false">
+				<span>Desktop</span>
+			</div>
+			<div class="image-wrapper">
+				<img class="device-image laptop-application" src="./promotional-assets/Laptop-Application.png" draggable="false">
+				<span>Laptop (Application)</span>
+			</div>
+			<div class="image-wrapper">
+				<img class="device-image tablet" src="./promotional-assets/Tablet.png" draggable="false">
+				<span>Tablet</span>
+			</div>
+			<div class="image-wrapper">
+				<img class="device-image phone" src="./promotional-assets/Phone.png" draggable="false">
+				<span>Phone</span>
+			</div>
+		</div>
+	</body>
+</html>

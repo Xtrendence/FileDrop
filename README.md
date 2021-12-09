@@ -40,6 +40,7 @@ First and foremost, all encryption is done on the client-side so that the server
 
 |Resource                     |URL                                                         |
 |-----------------------------|------------------------------------------------------------|
+|Mockup Devices               |[Device Shots](https://deviceshots.com/)                    |
 |Login Background             |[BG Jar](https://bgjar.com/)                                |
 |Main Background              |[SVG Backgrounds](https://www.svgbackgrounds.com/)          |
 |Font Awesome                 |[Font Awesome](https://www.fontawesome.com/)                |
